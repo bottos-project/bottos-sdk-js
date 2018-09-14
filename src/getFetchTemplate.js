@@ -18,6 +18,7 @@ function getRegisterFetchTemplate(params) {
   let publicKey = params.publicKey
   if (!keystore.isHex(publicKey)) {
     publicKey = BTCryptTool.buf2hex(publicKey)
+    console.log('publicKey', publicKey)
   }
 
   let param = {

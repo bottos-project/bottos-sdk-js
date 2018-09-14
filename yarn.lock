@@ -433,9 +433,9 @@ bottos-crypto-js@^1.0.14:
     secp256k1 "^3.5.0"
     uuid "^3.2.1"
 
-bottos-js-msgpack@^1.0.1:
-  version "1.0.1"
-  resolved "http://registry.npm.taobao.org/bottos-js-msgpack/download/bottos-js-msgpack-1.0.1.tgz#3dc7d04da4360f5eee7b9329d719d914322092af"
+bottos-js-msgpack@^1.0.2:
+  version "1.0.2"
+  resolved "http://registry.npm.taobao.org/bottos-js-msgpack/download/bottos-js-msgpack-1.0.2.tgz#a7410450487b56e18f7f02eef93c92c6597bcc5b"
   dependencies:
     bignumber.js "^7.2.1"
     long "^4.0.0"
@@ -589,7 +589,7 @@ camelcase@^4.1.0:
   version "4.1.0"
   resolved "http://registry.npm.taobao.org/camelcase/download/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
 
-chalk@^2.0.0, chalk@^2.3.0, chalk@^2.4.1:
+chalk@^2.0.0, chalk@^2.4.1:
   version "2.4.1"
   resolved "http://registry.npm.taobao.org/chalk/download/chalk-2.4.1.tgz#18c49ab16a037b6eb0152cc83e3471338215b66e"
   dependencies:
@@ -1842,7 +1842,7 @@ loader-runner@^2.3.0:
   version "2.3.0"
   resolved "http://registry.npm.taobao.org/loader-runner/download/loader-runner-2.3.0.tgz#f482aea82d543e07921700d5a46ef26fdac6b8a2"
 
-loader-utils@^1.0.2, loader-utils@^1.1.0:
+loader-utils@^1.1.0:
   version "1.1.0"
   resolved "http://registry.npm.taobao.org/loader-utils/download/loader-utils-1.1.0.tgz#c98aef488bcceda2ffb5e2de646d6a754429f5cd"
   dependencies:
@@ -2791,7 +2791,7 @@ selfsigned@^1.9.1:
   dependencies:
     node-forge "0.7.5"
 
-semver@^5.0.1, semver@^5.3.0, semver@^5.5.0:
+semver@^5.3.0, semver@^5.5.0:
   version "5.5.1"
   resolved "http://registry.npm.taobao.org/semver/download/semver-5.5.1.tgz#7dfdd8814bdb7cabc7be0fb1d734cfb66c940477"
 
@@ -3162,16 +3162,6 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-ts-loader@^5.1.0:
-  version "5.1.0"
-  resolved "http://registry.npm.taobao.org/ts-loader/download/ts-loader-5.1.0.tgz#ac13facb9360af4a4b072c851a120d17cbcaf1fa"
-  dependencies:
-    chalk "^2.3.0"
-    enhanced-resolve "^4.0.0"
-    loader-utils "^1.0.2"
-    micromatch "^3.1.4"
-    semver "^5.0.1"
-
 tslib@^1.9.0:
   version "1.9.3"
   resolved "http://registry.npm.taobao.org/tslib/download/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
@@ -3190,10 +3180,6 @@ type-is@~1.6.15, type-is@~1.6.16:
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "http://registry.npm.taobao.org/typedarray/download/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
-
-typescript@^3.0.3:
-  version "3.0.3"
-  resolved "http://registry.npm.taobao.org/typescript/download/typescript-3.0.3.tgz#4853b3e275ecdaa27f78fda46dc273a7eb7fc1c8"
 
 uglify-es@^3.3.4:
   version "3.3.9"

@@ -47,7 +47,7 @@ function fetchFactory(url, params, method = 'POST') {
  */
 function RequestManager(config) {
   this.prefix = config.baseUrl + '/' + config.version
-  this.chain_id = ""
+  this.chain_id = "4b97b92d2c78bcffe95ebd3067565c73a2931b39d5eb7234b11816dcec54761a"
 }
 
 RequestManager.prototype.request = fetchFactory

@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "bottos-crypto-js": "^1.0.14",
-    "bottos-js-msgpack": "^1.0.1"
+    "bottos-js-msgpack": "^1.0.2"
   },
   "devDependencies": {
     "webpack": "^4.18.0",
