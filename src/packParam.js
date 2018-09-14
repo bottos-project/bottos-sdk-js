@@ -37,6 +37,7 @@ function packByType(type, value) {
 
 /**
  * [_findFieldsFromStructsByName description]
+ * @private
  * @param       {Array} structs [description]
  * @param       {String} name    [description]
  * @return      {Object}         [description]
@@ -47,6 +48,7 @@ function _findFieldsFromStructsByName(structs, name) {
 
 /**
  * [_findStructNameFromActionsByMethod description]
+ * @private
  * @param       {Array} actions [description]
  * @param       {String} method  [description]
  * @return      {String}         [description]
@@ -56,7 +58,7 @@ function _findStructNameFromActionsByMethod(actions, method) {
 }
 
 /**
- * 
+ * @private
  * @param {string} name 
  * @param {Object} param 
  * @param {Array} structs 
@@ -117,52 +119,10 @@ function packParamWithABIandMethod(param, abi, method) {
 }
 
 
-function packParamToParamArr(param, fetchTemplate) {
+function packParamToParamArr(fetchTemplate) {
   const { contract, method } = fetchTemplate
+  const param = fetchTemplate.param
   return packParamWithABIandMethod(param, Abi, method);
 }
 
-/**
- * 
- * @param {Object} fetchTemplate 
- * @param {Uint8Array} privateKey 
- * @returns {string} signature
- */
-function _getParamSign(fetchTemplate, privateKey) {
-  let encodeBuf = messageProtoEncode(fetchTemplate)
-  let hashData = BTCryptTool.sha256(BTCryptTool.buf2hex(encodeBuf) + "00000000000000000000000000000000")
-  let sign = BTCryptTool.sign(hashData, privateKey)
-  // console.log('sign', sign);
-  let signature = sign.toString('hex')
-  return signature;
-}
-
-/**
- * 
- * @param {Object} fetchTemplate 
- * @param {Object} privateKey 
- * @param {Object} fetchTemplate 
- */
-function _getSignaturedFetchTemplate(fetchTemplate, privateKey) {
-  let signature = _getParamSign(fetchTemplate, privateKey)
-  let param = BTCryptTool.buf2hex(fetchTemplate.param)
-  let _fetchTemplate = Object.assign({}, fetchTemplate, { signature, param })
-  // console.log('fetchTemplate.signature', fetchTemplate.signature);
-  return _fetchTemplate
-}
-
-/**
- * pack the param
- * @param {Object} param 
- * @param {Object} fetchTemplate 
- * @param {Uint8Array} privateKey 
- */
-function packParam(param, fetchTemplate, privateKey) {
-  const { contract, method } = fetchTemplate
-  let arr = packParamWithABIandMethod(param, Abi, method);
-  fetchTemplate.param = arr
-  return _getSignaturedFetchTemplate(fetchTemplate, privateKey)
-}
-
-
-module.exports = packParam
+module.exports = packParamToParamArr

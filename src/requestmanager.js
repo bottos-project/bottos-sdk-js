@@ -12,7 +12,7 @@ function parseJSON(res) {
  * @param {string} method 
  */
 function fetchFactory(url, params, method = 'POST') {
-  console.log(' fetchFactory, url, params: ', url, params)
+  // console.log(' fetchFactory, url, params: ', url, params)
 
   if (method.toUpperCase() == 'GET') {
     let paramStr = ''
@@ -40,13 +40,14 @@ function fetchFactory(url, params, method = 'POST') {
 }
 
 /**
- * 
+ * @constructor
  * @param {Object} config 
  * @param {string} config.baseUrl
  * @param {string} config.version
  */
 function RequestManager(config) {
   this.prefix = config.baseUrl + '/' + config.version
+  this.chain_id = ""
 }
 
 RequestManager.prototype.request = fetchFactory
@@ -58,7 +59,7 @@ RequestManager.prototype.getBlockHeader = function () {
   return this.request('/block/height', null, 'GET')
     .then(parseJSON)
     .then((res) => {
-      console.log('res', res)
+      // console.log('res', res)
       if (!(res && res.errcode == 0)) {
         throw new Error('GetBlockHeader error')
       }
@@ -67,6 +68,8 @@ RequestManager.prototype.getBlockHeader = function () {
       __blockHeader.cursor_label = data.cursor_label
       __blockHeader.cursor_num = data.head_block_num
       __blockHeader.lifetime = data.head_block_time + 300
+      // set chain_id
+      this.chain_id = data.chain_id
       return __blockHeader
     })
 }

@@ -6,13 +6,20 @@ const RequestManager = require('./requestmanager')
 const Wallet = require('./wallet')
 
 console.log('BTCrypto', BTCrypto);
-console.log('msgpack', msgpack);
+// console.log('msgpack', msgpack);
 
 const defaultConfig = {
   baseUrl: 'http://127.0.0.1:8689',
   version: 'v1' // version
 }
 
+/**
+ * Represents the SDK.
+ * @constructor
+ * @param {Object} config
+ * @param {string} config.baseUrl
+ * @param {string} config.version
+ */
 function SDK(config = defaultConfig) {
   this.config = config
   this._requestManager = new RequestManager(config);
@@ -26,7 +33,7 @@ console.log('sdk', sdk);
 function test() {
   
   const keys = sdk.wallet.createKeys()
-  console.log('公私钥对 keys: ', keys)
+  // console.log('公私钥对 keys: ', keys)
 
   const account = 'adfa'
 
@@ -45,11 +52,17 @@ function test() {
   // const pk = sdk.wallet.recoverKeystore(keystoreParam.password, keystore)
   // console.log('pk: ', pk)
 
-  sdk.wallet.createAccount(account, keys)
-    .then(res => {
-      console.log('register res: ', res)
-      return res
-    })
+  let accountParams = {
+    account,
+    password: 'afafafaf',
+    // referrer: '',
+  }
+
+  sdk.wallet.createAccount(accountParams)
+    // .then(res => {
+    //   console.log('register res: ', res)
+    //   return res
+    // })
 
 
   // 转账测试
@@ -58,11 +71,11 @@ function test() {
     to: 'bbb',
     value: '100',
   }
-  sdk.wallet.sendTransaction(params, keys)
-    .then(res => {
-      console.log('register res: ', res)
-      return res
-    })
+  // sdk.wallet.sendTransaction(params, keys.privateKey)
+  //   .then(res => {
+  //     console.log('register res: ', res)
+  //     return res
+  //   })
 
 }
 
