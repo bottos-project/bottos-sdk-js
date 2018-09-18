@@ -21,4 +21,13 @@ function SDK(config = defaultConfig) {
   this.wallet = new Wallet(this._requestManager)
 }
 
+if (process.env.NODE_ENV != 'development') {
+  if (typeof window === 'object') {
+    window.BottosWalletSDK = SDK
+  } else if (typeof global == 'object') {
+    global.BottosWalletSDK = SDK
+  }
+}
+
+
 module.exports = SDK
