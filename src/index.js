@@ -1,11 +1,12 @@
 
-const RequestManager = require('./requestmanager')
-const Wallet = require('./wallet')
+const ToolFactory = require('./Tool')
+const ApiFactory = require('./Api')
+const walletFactory = require('./walletFactory')
 
 const defaultConfig = {
-  baseUrl: 'http://192.168.2.178:8689',
+  baseUrl: 'http://192.168.2.178:8689/v1',
   // baseUrl: 'http://127.0.0.1:8689',
-  version: 'v1' // version
+  version: '1' // version
 }
 
 /**
@@ -17,17 +18,9 @@ const defaultConfig = {
  */
 function SDK(config = defaultConfig) {
   this.config = config
-  this._requestManager = new RequestManager(config);
-  this.wallet = new Wallet(this._requestManager)
+  this.Api = ApiFactory(config)
+  this.Tool = ToolFactory(config, this.Api)
+  this.Wallet = walletFactory(this.Tool)
 }
-
-if (process.env.NODE_ENV != 'development') {
-  if (typeof window === 'object') {
-    window.BottosWalletSDK = SDK
-  } else if (typeof global == 'object') {
-    global.BottosWalletSDK = SDK
-  }
-}
-
 
 module.exports = SDK

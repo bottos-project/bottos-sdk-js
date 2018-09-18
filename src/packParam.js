@@ -119,10 +119,11 @@ function packParamWithABIandMethod(param, abi, method) {
 }
 
 
-function packParamToParamArr(fetchTemplate) {
+function packParamToParamArr(fetchTemplate, abi = Abi) {
   const { contract, method } = fetchTemplate
   const param = fetchTemplate.param
-  return packParamWithABIandMethod(param, Abi, method);
+  return packParamWithABIandMethod(param, abi, method);
 }
 
+// module.exports.packParamWithABIandMethod = packParamWithABIandMethod
 module.exports = packParamToParamArr
