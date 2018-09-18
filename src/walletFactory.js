@@ -45,17 +45,22 @@ function walletFactory(Tool) {
     console.log('fetchParams', fetchParams);
 
     // 3. try to register on chain
-    return Tool._Api.request('/wallet/createaccount', fetchParams).then(res => res.json()).then(res => {
-      console.log('createaccount res: ', res)
-      if (res.errcode == 0) {
-        return createKeystore({
-          account: params.account,
-          password: params.password,
-          privateKey: keys.privateKey
-        })
-      } else {
-        throw new Error("createAccount error: ", res)
+    return Tool._Api.request('/wallet/createaccount', fetchParams)
+    .then(res => res.json())
+    .then(res => {
+      if (!res) {
+        throw new Error('createAccountWithIntro error')
+      } else if (res.errcode != 0) {
+        throw new Error(res.msg)
       }
+
+      // console.log('createaccount res: ', res)
+      return createKeystore({
+        account: params.account,
+        password: params.password,
+        privateKey: keys.privateKey
+      })
+
     })
 
   }
@@ -83,7 +88,17 @@ function walletFactory(Tool) {
     
     // 2. try to register on chain
     return Tool.getRequestParams(originFetchTemplate, privateKey)
-      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate).then(res => res.json()))
+      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate)
+      .then(res => res.json()))
+      .then(res => {
+        if (!res) {
+          throw new Error('createAccountWithIntro error')
+        } else if (res.errcode != 0) {
+          throw new Error(res.msg)
+        } else {
+          return res
+        }
+      })
 
   }
 
@@ -145,7 +160,18 @@ function walletFactory(Tool) {
 
         let fetchTemplate = processFetchTemplate(originFetchTemplate, blockHeader, privateKey)
 
-        return Tool._Api.request('/transaction/send', fetchTemplate).then(res => res.json())
+        return Tool._Api.request('/transaction/send', fetchTemplate)
+          .then(res => res.json())
+          .then(res => {
+            if (!res) {
+              throw new Error('createAccountWithIntro error')
+            } else if (res.errcode != 0) {
+              throw new Error(res.msg)
+            } else {
+              return res
+            }
+          })
+
       })
 
   }
