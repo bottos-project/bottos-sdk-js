@@ -1,7 +1,5 @@
-const BTCryptTool = require('bottos-crypto-js')
 const {BasicPack} = require('bottos-js-msgpack')
 const Abi = require('../Abi.js')
-const { messageProtoEncode } = require('../lib/proto/index')
 
 const basicType = ['string', 'uint8', 'uint16', 'uint32', 'uint64', 'uint256']
 
@@ -54,7 +52,9 @@ function _findFieldsFromStructsByName(structs, name) {
  * @return      {String}         [description]
  */
 function _findStructNameFromActionsByMethod(actions, method) {
-  return actions.find(act => act.action_name == method).type
+  const action = actions.find(act => act.action_name == method)
+  if (action) return action.type
+  throw new Error('Can not find method: ' + method + ' in build in Abi.')
 }
 
 /**

@@ -21,17 +21,24 @@ const createKeystore = function (params) {
 
 function walletFactory(Tool) {
 
+  /**
+   * Wallet namespace
+   * @namespace Wallet
+   */
   const Wallet = {}
 
   /**
    * create account
+   * Refer to this by {@link Wallet.createAccount}.
+   * @memberof Wallet
    * @param {Object} params - the params
    * @param {string} params.account - account
    * @param {string} params.password - password
+   * @param {Function} [callback] - callback
    * @returns {Promise}
    */
-  Wallet.createAccount = function (params) {
-
+  Wallet.createAccount = function (params, callback) {
+    const cb = callback
     // 1. create key pair
     const keys = keystore.createKeys()
 
@@ -42,32 +49,57 @@ function walletFactory(Tool) {
       public_key,
     }
 
-    console.log('fetchParams', fetchParams);
+    // console.log('fetchParams', fetchParams);
 
     // 3. try to register on chain
-    return Tool._Api.request('/wallet/createaccount', fetchParams)
+    let promise = Tool._Api.request('/wallet/createaccount', fetchParams)
     .then(res => res.json())
-    .then(res => {
+
+    if (!cb) return promise.then(res => {
+      var err = null
       if (!res) {
-        throw new Error('createAccountWithIntro error')
+        err = new Error('createAccountWithIntro error')
       } else if (res.errcode != 0) {
-        throw new Error(res.msg)
+        err = res
       }
+      if (err) throw err
 
       // console.log('createaccount res: ', res)
-      return createKeystore({
+      let keystoreObj = createKeystore({
         account: params.account,
         password: params.password,
         privateKey: keys.privateKey
       })
 
+      return keystoreObj
+
     })
+
+    promise.then(res => {
+      var err = null, result;
+      if (!res) {
+        err = new Error('createAccountWithIntro error')
+      } else if (res.errcode != 0) {
+        err = res
+      } else {
+        // console.log('createaccount res: ', res)
+        result = createKeystore({
+          account: params.account,
+          password: params.password,
+          privateKey: keys.privateKey
+        })
+
+      }
+      cb(err, result)
+    })
+    .catch(err => cb(err))
 
   }
 
 
   /**
    * register account on chain
+   * @memberof Wallet
    * @param {Object} params - The params
    * @param {string} params.account - The new user's account
    * @param {string|Uint8Array} params.publicKey - The publicKey provided by the new user
@@ -88,8 +120,8 @@ function walletFactory(Tool) {
     
     // 2. try to register on chain
     return Tool.getRequestParams(originFetchTemplate, privateKey)
-      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate)
-      .then(res => res.json()))
+      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
       .then(res => {
         if (!res) {
           throw new Error('createAccountWithIntro error')
@@ -104,6 +136,7 @@ function walletFactory(Tool) {
 
   /**
    * register account on chain
+   * @memberof Wallet
    * @param {Object} params - The params
    * @param {string} params.account - The new user's account
    * @param {string} params.password - password
@@ -153,26 +186,25 @@ function walletFactory(Tool) {
    * @param {string|Uint8Array} privateKey
    */
   Wallet.sendTransaction = function (params, privateKey) {
-    // const contract = token_type === "BTO" ? "bottos" : "bottostoken",
-    return Tool._Api.getBlockHeader()
-      .then((blockHeader) => {
-        let originFetchTemplate = getTransferFetchTemplate(params)
+    let promise = Tool._Api.getBlockHeader()
+    return promise.then((blockHeader) => {
+      let originFetchTemplate = getTransferFetchTemplate(params)
 
-        let fetchTemplate = processFetchTemplate(originFetchTemplate, blockHeader, privateKey)
+      let fetchTemplate = processFetchTemplate(originFetchTemplate, blockHeader, privateKey)
 
-        return Tool._Api.request('/transaction/send', fetchTemplate)
-          .then(res => res.json())
-          .then(res => {
-            if (!res) {
-              throw new Error('createAccountWithIntro error')
-            } else if (res.errcode != 0) {
-              throw new Error(res.msg)
-            } else {
-              return res
-            }
-          })
+      return Tool._Api.request('/transaction/send', fetchTemplate)
+        .then(res => res.json())
+        .then(res => {
+          if (!res) {
+            throw new Error('createAccountWithIntro error')
+          } else if (res.errcode != 0) {
+            throw new Error(res.msg)
+          } else {
+            return res
+          }
+        })
 
-      })
+    })
 
   }
 

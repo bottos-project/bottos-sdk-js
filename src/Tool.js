@@ -6,7 +6,9 @@ const keystore = BTCryptTool.keystore
 
 
 function ToolFactory(config, Api) {
-
+  /**
+   * @namespace Tool
+   */
   const Tool = {
     _Api: Api
   }
@@ -39,6 +41,7 @@ function ToolFactory(config, Api) {
    * @param {number} originFetchTemplate.sig_alg
    * @param {Object} blockHeader
    * @param {string|Uint8Array} privateKey
+   * @returns {Object}
    */
   const processFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
     let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
@@ -57,20 +60,23 @@ function ToolFactory(config, Api) {
   }
 
 
-
   /**
+   * @inner
+   * @memberof Tool
    * @param {Object} originFetchTemplate
-   * @param {number} [originFetchTemplate.version]
-   * @param {string} [originFetchTemplate.sender]
-   * @param {string} originFetchTemplate.contract
+   * @param {number} [originFetchTemplate.version] - Default value is 1.
+   * @param {string} [originFetchTemplate.sender] - Default value is bottos.
+   * @param {string} originFetchTemplate.contract - The contract. Default value is bottos.
    * @param {string} originFetchTemplate.method
    * @param {Object} originFetchTemplate.param
-   * @param {number} [originFetchTemplate.sig_alg]
-   * @param {string|Uint8Array} privateKey
+   * @param {number} [originFetchTemplate.sig_alg] - Default value is 1.
+   * @param {string|Uint8Array} privateKey - Your private key.
+   * @returns {Promise|undefined} If callback is undefined, a promise will be returned.
    */
-  Tool.getRequestParams = function(originFetchTemplate, privateKey) {
+  Tool.getRequestParams = function (originFetchTemplate, privateKey) {
+    const cb = callback
     let _defaultParams = {
-      version: config.version,
+      version: config.version || 1,
       sender: "bottos",
       contract: "bottos",
       method: "",
@@ -85,7 +91,7 @@ function ToolFactory(config, Api) {
         .then((blockHeader) => processFetchTemplate(params, blockHeader, privateKey))
     }
     // 如果不是内置合约
-    Api.getAbi(params.contract)
+    return Api.getAbi(params.contract)
     .then(abi => {
       return this._Api.getBlockHeader()
         .then((blockHeader) => processFetchTemplate(params, blockHeader, privateKey, abi))
