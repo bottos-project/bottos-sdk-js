@@ -65,7 +65,7 @@ function ApiFactory(config) {
    * @memberof Api
    * @param {string} contract - The contract name.
    * @param {functionCallback} [callback] - The optional callback.
-   * @returns {promise|undefined}
+   * @returns {Promise|undefined}
    */
   Api.getAbi = function (contract, callback) {
     const cb = callback

@@ -1,16 +1,57 @@
-const { addBlockHeader } = require('./getFetchTemplate.js')
-const packParamToParamArr = require('./packParam')
-const { messageProtoEncode } = require('../lib/proto/index')
+const { addBlockHeader } = require('../lib/getFetchTemplate')
+const packParamToParamArr = require('../lib/packParam')
 const BTCryptTool = require('bottos-crypto-js');
 const keystore = BTCryptTool.keystore
+const { BasicPack } = require('bottos-js-msgpack')
 
+/**
+ * encode the message
+ * @param {Object} msg 
+ * @param {number} msg.version
+ * @param {number} msg.cursor_num
+ * @param {number} msg.cursor_label
+ * @param {number} msg.lifetime
+ * @param {string} msg.sender 
+ * @param {string} msg.contract 
+ * @param {string} msg.method 
+ * @param {Array} msg.param 
+ * @param {number} msg.sig_alg
+ */
+const messageProtoEncode = (msg) => {
+  let pArraySize = BasicPack.PackArraySize(9)
+  let pVersion = BasicPack.PackUint32(msg.version)
+  let pCursorNum = BasicPack.PackUint64(msg.cursor_num)
+  let pCursorLabel = BasicPack.PackUint32(msg.cursor_label)
+  let pLifeTime = BasicPack.PackUint64(msg.lifetime)
+  let pSender = BasicPack.PackStr16(msg.sender)
+  let pContract = BasicPack.PackStr16(msg.contract)
+  let pMethod = BasicPack.PackStr16(msg.method)
+  let pParam = BasicPack.PackBin16(Uint8Array.from(msg.param))
+
+  let uint8Param = new Uint8Array(pParam.byteLength)
+  for (let i = 0; i < pParam.byteLength; i++) {
+    uint8Param[i] = pParam[i]
+  }
+  // console.log({ uint8Param })
+  let pSigalg = BasicPack.PackUint32(msg.sig_alg)
+
+  let buf = [...pArraySize, ...pVersion, ...pCursorNum, ...pCursorLabel, ...pLifeTime, ...pSender, ...pContract, ...pMethod, ...uint8Param, ...pSigalg]
+
+  return buf
+}
 
 function ToolFactory(config, Api) {
   /**
    * @namespace Tool
    */
   const Tool = {
-    _Api: Api
+    _Api: Api,
+    /**
+     * @inner
+     * @param {Uint8Array} buffer Uint8Array buffer.
+     * @returns {string} Hexadecimal string.
+     */
+    buf2hex: BTCryptTool.buf2hex,
   }
 
   /**
@@ -74,7 +115,6 @@ function ToolFactory(config, Api) {
    * @returns {Promise|undefined} If callback is undefined, a promise will be returned.
    */
   Tool.getRequestParams = function (originFetchTemplate, privateKey) {
-    const cb = callback
     let _defaultParams = {
       version: config.version || 1,
       sender: "bottos",

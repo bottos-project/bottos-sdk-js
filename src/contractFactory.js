@@ -14,7 +14,11 @@ function contractFactory(Tool) {
    */
   Contract.callContract = function (originFetchTemplate, privateKey) {
     return Tool.getRequestParams(originFetchTemplate, privateKey)
-      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(fetchTemplate => {
+        // console.log('fetchTemplate', fetchTemplate)
+        return Tool._Api.request('/transaction/send', fetchTemplate)
+      })
+      .then(res => res.json())
   }
 
   return Contract
