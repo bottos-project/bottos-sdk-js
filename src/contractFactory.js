@@ -10,9 +10,11 @@ function contractFactory(Tool) {
   const Contract = {}
 
   /**
-   * @memberof Contract
+   * @async
+   * @function Contract.callContract
    * @param {Object} originFetchTemplate 
    * @param {string|Uint8Array} privateKey
+   * @returns {Promise<Object>}
    */
   Contract.callContract = function (originFetchTemplate, privateKey) {
     return Tool.getRequestParams(originFetchTemplate, privateKey)

@@ -17,16 +17,16 @@ const Api = {
 }
 
 /**
- * @private
+ * @ignore
  * @param {Object} config 
  * @param {string} config.baseUrl
- * @param {string} config.version
+ * @param {number} config.version
  */
 function ApiFactory(config) {
 
   /**
-   * 
-   * @param {string} url 
+   * @function Api.request
+   * @param {string} url
    * @param {Object} params 
    * @param {string} [method=POST] 
    */
@@ -58,15 +58,15 @@ function ApiFactory(config) {
     return fetch(config.baseUrl + url, __options)
   }
 
+
   Api.request = simpleFetch
   
   /**
    * Returns the abi. If callback is undefined, this function will return a promise.
-   * @inner
-   * @memberof Api
+   * @function Api.getAbi
    * @param {string} contract - The contract name.
    * @param {functionCallback} [callback] - The optional callback.
-   * @returns {Promise|undefined}
+   * @returns {Promise<Object>|undefined}
    */
   Api.getAbi = function (contract, callback) {
     const cb = callback
@@ -102,9 +102,9 @@ function ApiFactory(config) {
 
   /**
    * Documented as Api.getBlockHeader.
-   * @inner
+   * @function Api.getBlockHeader
    * @param {functionCallback} [callback]
-   * @returns {Promise|undefined} If callback is undefined, a promise will be returned.
+   * @returns {Promise<Object>|undefined} If callback is undefined, a promise will be returned.
    */
   Api.getBlockHeader = function (callback) {
     const cb = callback
