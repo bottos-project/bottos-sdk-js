@@ -16,18 +16,19 @@ const Api = {
   chain_id: "4b97b92d2c78bcffe95ebd3067565c73a2931b39d5eb7234b11816dcec54761a"
 }
 
-  /**
-   * @param {Object} config 
-   * @param {string} config.baseUrl
-   * @param {string} config.version
-   */
+/**
+ * @private
+ * @param {Object} config 
+ * @param {string} config.baseUrl
+ * @param {string} config.version
+ */
 function ApiFactory(config) {
 
   /**
    * 
    * @param {string} url 
    * @param {Object} params 
-   * @param {string} method 
+   * @param {string} [method=POST] 
    */
   function simpleFetch(url, params, method = 'POST') {
     // console.log(' simpleFetch, url, params: ', url, params)

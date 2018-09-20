@@ -5,7 +5,19 @@ const keystore = BTCryptTool.keystore
 const { BasicPack } = require('bottos-js-msgpack')
 
 /**
+ * @typedef {Object} originFetchTemplate
+ * @property {number} [originFetchTemplate.version=1] - Default value is 1.
+ * @property {string} [originFetchTemplate.sender=bottos] - Default value is bottos.
+ * @property {string} [originFetchTemplate.contract=bottos] - The contract. Default value is bottos.
+ * @property {string} originFetchTemplate.method
+ * @property {Object} originFetchTemplate.param
+ * @property {number} [originFetchTemplate.sig_alg=1] - Default value is 1.
+ */
+
+
+/**
  * encode the message
+ * @private
  * @param {Object} msg 
  * @param {number} msg.version
  * @param {number} msg.cursor_num
@@ -14,7 +26,7 @@ const { BasicPack } = require('bottos-js-msgpack')
  * @param {string} msg.sender 
  * @param {string} msg.contract 
  * @param {string} msg.method 
- * @param {Array} msg.param 
+ * @param {Array<number>} msg.param 
  * @param {number} msg.sig_alg
  */
 const messageProtoEncode = (msg) => {
@@ -39,6 +51,7 @@ const messageProtoEncode = (msg) => {
 
   return buf
 }
+
 
 function ToolFactory(config, Api) {
   /**
@@ -73,13 +86,7 @@ function ToolFactory(config, Api) {
 
   /**
    * @private
-   * @param {Object} originFetchTemplate
-   * @param {number} originFetchTemplate.version
-   * @param {string} originFetchTemplate.sender
-   * @param {string} originFetchTemplate.contract
-   * @param {string} originFetchTemplate.method
-   * @param {Object} originFetchTemplate.param
-   * @param {number} originFetchTemplate.sig_alg
+   * @param {originFetchTemplate} originFetchTemplate
    * @param {Object} blockHeader
    * @param {string|Uint8Array} privateKey
    * @returns {Object}
@@ -104,13 +111,7 @@ function ToolFactory(config, Api) {
   /**
    * @inner
    * @memberof Tool
-   * @param {Object} originFetchTemplate
-   * @param {number} [originFetchTemplate.version] - Default value is 1.
-   * @param {string} [originFetchTemplate.sender] - Default value is bottos.
-   * @param {string} originFetchTemplate.contract - The contract. Default value is bottos.
-   * @param {string} originFetchTemplate.method
-   * @param {Object} originFetchTemplate.param
-   * @param {number} [originFetchTemplate.sig_alg] - Default value is 1.
+   * @param {originFetchTemplate} originFetchTemplate
    * @param {string|Uint8Array} privateKey - Your private key.
    * @returns {Promise|undefined} If callback is undefined, a promise will be returned.
    */

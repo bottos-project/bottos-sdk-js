@@ -1,5 +1,8 @@
 /**
- * SDK module.
+ * BottosWalletSDK module.
+ */
+/**
+ * @private
  */
 const ApiFactory = require('./Api')
 const ToolFactory = require('./Tool')
@@ -14,13 +17,13 @@ const defaultConfig = {
 
 
 /**
- * Represents the SDK.
+ * Represents the BottosWalletSDK.
  * @class
  * @param {Object} config
- * @param {string} [config.baseUrl='http://127.0.0.1:8689/v1']
+ * @param {string} [config.baseUrl=http://127.0.0.1:8689/v1]
  * @param {number} [config.version=1]
  */
-function SDK(config) {
+function BottosWalletSDK(config) {
   this.config = Object.assign({}, defaultConfig, config)
   /**
    * See {@link Api}.
@@ -51,4 +54,4 @@ function SDK(config) {
  * @instance
  */
 
-module.exports = SDK
+module.exports = BottosWalletSDK

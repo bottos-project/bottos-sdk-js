@@ -5,6 +5,7 @@ keystore.constants.scrypt.n = 1024
 const { getRegisterFetchTemplate, getTransferFetchTemplate } = require('../lib/getFetchTemplate.js')
 
 /**
+ * @private
  * @param {Object} params - the params required for create keystore
  * @param {string} params.account - account
  * @param {string} params.password - password
@@ -136,6 +137,8 @@ function walletFactory(Tool) {
 
   /**
    * register account on chain
+   * @function
+   * @public
    * @memberof Wallet
    * @param {Object} params - The params
    * @param {string} params.account - The new user's account
@@ -146,6 +149,7 @@ function walletFactory(Tool) {
   Wallet.createAccountByIntro = createKeystore
 
   /**
+   * @public
    * Create public and private key pair
    * @returns {Object} keys
    */
@@ -160,7 +164,7 @@ function walletFactory(Tool) {
   // version: 3,
 
   /**
-   *
+   * @public
    * @param {string} password - password
    * @param {Object} keyObject - the keystore
    * @returns {ArrayBuffer} privateKey - privateKey

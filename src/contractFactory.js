@@ -1,5 +1,7 @@
 
-
+/**
+ * @private
+ */
 function contractFactory(Tool) {
 
   /**
