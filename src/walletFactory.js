@@ -63,6 +63,7 @@ function walletFactory(Tool) {
 
       // 1. create key pair
       const keys = keystore.createKeys()
+      // console.log('keys', keys)
   
       const public_key = Tool.buf2hex(keys.publicKey)
       // 2. pack params
@@ -72,7 +73,7 @@ function walletFactory(Tool) {
       }
 
       // 3. try to register on chain
-      Tool._Api.request('/wallet/createaccount', fetchParams)
+      return Tool._Api.request('/wallet/createaccount', fetchParams)
       .then(res => res.json())
       .then(res => {
         var err = null
@@ -89,7 +90,8 @@ function walletFactory(Tool) {
           password: params.password,
           privateKey: keys.privateKey
         })
-  
+        // console.log('createaccount keystoreObj: ', keystoreObj)
+
         return keystoreObj
   
       })
@@ -167,7 +169,13 @@ function walletFactory(Tool) {
    * @returns {Promise<Object>}
    */
   Wallet.getAccountInfo = function (account_name) {
-    return Tool._Api.request('/account/info', { account_name }).then(res => res.json())
+    return Tool._Api.request('/account/info', { account_name })
+    .then(res => res.json())
+    .then(res => {
+      if (!res) throw new Error('Get account info error.')
+      if (res.errcode != 0) throw res
+      return res.result
+    })
   }
 
   /**

@@ -111,7 +111,7 @@ function ToolFactory(config, Api) {
     // console.log('paramArr', paramArr)
     fetchTemplate.param = paramArr
     
-    console.log('fetchTemplate', fetchTemplate)
+    // console.log('fetchTemplate', fetchTemplate)
     let signature = signMsg(fetchTemplate, privateKey)
     // console.log('signature', signature)
 
@@ -147,36 +147,86 @@ function ToolFactory(config, Api) {
   }
 
   /**
-   * Deploy an abi.
+   * Deploy a contract.
    * @async
-   * @function Tool.deployABI
+   * @function Tool.deployContract
    * @param {Object} param
-   * @param {string} param.contract - Contract name
-   * @param {string} param.contract_abi - ABI file content.
+   * @param {number} [param.vm_type=1] - vm_type, now is 1.
+   * @param {number} [param.vm_version=1] - vm_version, now is 1.
+   * @param {Uint8Array|ArrayBuffer} param.contract_code - wasm file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
    * @param {string|Uint8Array} senderInfo.privateKey - sender's privateKey
    * @returns {Promise<Object>}
    */
-  // Tool.deployABI = function (param, senderInfo) {
+  Tool.deployCode = function (param, senderInfo) {
+    let code = param.contract_code
+    // console.log('deployCode code 1:', code)
+    if (code instanceof ArrayBuffer) {
+      code = new Uint8Array(code)
+    }
 
-  //   const contract_abi = [23,454,534,556,334,56,3,34,34,56,345,63,4,56]
+    let params = {
+      sender: senderInfo.account,
+      method: "deploycode",
+      param: {
+        contract: senderInfo.account,
+        vm_type: param.vm_type != undefined ? param.vm_type : 1,
+        vm_version: param.vm_version != undefined ? param.vm_version : 1,
+        contract_code: code
+      }
+    }
 
-  //   let params = {
-  //     sender: senderInfo.account,
-  //     method: "deployabi",
-  //     param: {
-  //       contract: param.contract,
-  //       contract_abi
-  //     }
-  //   }
+    // return console.log('deployCode params:', params)
 
-  //   return this._Api.getBlockHeader()
-  //     .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))
-  //     .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
-  //     .then(res => res.json())
+    return this._Api.getBlockHeader()
+      .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))
+      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
 
-  // }
+  }
+
+  /**
+   * Deploy an abi.
+   * @async
+   * @function Tool.deployABI
+   * @param {Object} param
+   * @param {string|Uint8Array|ArrayBuffer} param.contract_abi - ABI content or file buffer.
+   * @param {Object} senderInfo - The sender
+   * @param {string} senderInfo.account - sender's account
+   * @param {string|Uint8Array} senderInfo.privateKey - sender's privateKey
+   * @returns {Promise<Object>}
+   */
+  Tool.deployABI = function (param, senderInfo) {
+    let code = param.contract_abi
+    // console.log('deployCode code 1:', code)
+    if (typeof code == 'string') {
+      code = BasicPack.PackStr16(code).slice(3)
+    } else if (code instanceof ArrayBuffer) {
+      code = new Uint8Array(code)
+    }
+    
+    console.assert(code instanceof Uint8Array, 'Type error. param contract_abi: ' + param.contract_abi + ' could not be transcode to Uint8Array')
+    // console.log('deployABI code 2:', code)
+    
+    let params = {
+      sender: senderInfo.account,
+      method: "deployabi",
+      param: {
+        contract: senderInfo.account,
+        contract_abi: code
+      }
+    }
+
+    // return console.log('deployABI params:', params)
+
+    return this._Api.getBlockHeader()
+      .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))
+      // .then(fetchTemplate => console.log('deployCode fetchTemplate: ', fetchTemplate))
+      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
+
+  }
 
   return Tool
   
