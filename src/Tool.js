@@ -3,7 +3,6 @@ const packParamToParamArr = require('../lib/packParam')
 const BTCryptTool = require('bottos-crypto-js');
 const keystore = BTCryptTool.keystore
 const { BasicPack } = require('bottos-js-msgpack')
-// console.log('BTCryptTool', BTCryptTool)
 
 /**
  * @typedef {Object} originFetchTemplate
@@ -46,7 +45,6 @@ const messageProtoEncode = (msg) => {
   for (let i = 0; i < pParam.byteLength; i++) {
     uint8Param[i] = pParam[i]
   }
-  // console.log({ uint8Param })
   let pSigalg = BasicPack.PackUint32(msg.sig_alg)
 
   let buf = [...pArraySize, ...pVersion, ...pCursorNum, ...pCursorLabel, ...pLifeTime, ...pSender, ...pContract, ...pMethod, ...uint8Param, ...pSigalg]
@@ -89,7 +87,6 @@ function ToolFactory(config, Api) {
     let encodeBuf = messageProtoEncode(fetchTemplate)
     const chain_id = Api.chain_id
     let msg = BTCryptTool.buf2hex(encodeBuf) + chain_id
-    // console.log('aaa', BTCryptTool.buf2hex(a))
     let pri = keystore.str2buf(privateKey)
     let hashData = BTCryptTool.sha256(msg)
     let sign = BTCryptTool.sign(hashData, pri)
@@ -108,13 +105,8 @@ function ToolFactory(config, Api) {
     let _originFetchTemplate = Object.assign({}, _defaultParams, originFetchTemplate)
     let fetchTemplate = addBlockHeader(_originFetchTemplate, blockHeader)
     let paramArr = packParamToParamArr(fetchTemplate, abi)
-    // console.log('paramArr', paramArr)
     fetchTemplate.param = paramArr
-    
-    // console.log('fetchTemplate', fetchTemplate)
     let signature = signMsg(fetchTemplate, privateKey)
-    // console.log('signature', signature)
-
     fetchTemplate.param = BTCryptTool.buf2hex(paramArr)
     // console.log('fetchTemplate.param', fetchTemplate.param)
     fetchTemplate.signature = signature
@@ -139,11 +131,8 @@ function ToolFactory(config, Api) {
     }
     // 如果不是内置合约
     return Api.getAbi(originFetchTemplate.contract)
-    .then(abi => {
-      // console.log('abi', abi)
-      return this._Api.getBlockHeader()
-        .then((blockHeader) => processFetchTemplate(originFetchTemplate, blockHeader, privateKey, abi))
-    })
+    .then(abi => this._Api.getBlockHeader()
+      .then((blockHeader) => processFetchTemplate(originFetchTemplate, blockHeader, privateKey, abi)))
   }
 
   /**
@@ -161,7 +150,6 @@ function ToolFactory(config, Api) {
    */
   Tool.deployCode = function (param, senderInfo) {
     let code = param.contract_code
-    // console.log('deployCode code 1:', code)
     if (code instanceof ArrayBuffer) {
       code = new Uint8Array(code)
     }
@@ -176,8 +164,6 @@ function ToolFactory(config, Api) {
         contract_code: code
       }
     }
-
-    // return console.log('deployCode params:', params)
 
     return this._Api.getBlockHeader()
       .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))
@@ -199,7 +185,6 @@ function ToolFactory(config, Api) {
    */
   Tool.deployABI = function (param, senderInfo) {
     let code = param.contract_abi
-    // console.log('deployCode code 1:', code)
     if (typeof code == 'string') {
       code = BasicPack.PackStr16(code).slice(3)
     } else if (code instanceof ArrayBuffer) {
@@ -207,7 +192,6 @@ function ToolFactory(config, Api) {
     }
     
     console.assert(code instanceof Uint8Array, 'Type error. param contract_abi: ' + param.contract_abi + ' could not be transcode to Uint8Array')
-    // console.log('deployABI code 2:', code)
     
     let params = {
       sender: senderInfo.account,
@@ -217,8 +201,6 @@ function ToolFactory(config, Api) {
         contract_abi: code
       }
     }
-
-    // return console.log('deployABI params:', params)
 
     return this._Api.getBlockHeader()
       .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))

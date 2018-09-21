@@ -1,7 +1,7 @@
 {
   "name": "bottos-sdk-js",
-  "version": "1.0.0",
-  "main": "src/index.js",
+  "version": "0.1.0",
+  "main": "./src/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",

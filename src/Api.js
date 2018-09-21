@@ -31,7 +31,6 @@ function ApiFactory(config) {
    * @param {string} [method=POST] 
    */
   function simpleFetch(url, params, method = 'POST') {
-    // console.log(' simpleFetch, url, params: ', url, params)
   
     if (method.toUpperCase() == 'GET') {
       let paramStr = ''

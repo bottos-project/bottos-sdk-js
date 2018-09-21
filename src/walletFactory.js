@@ -84,13 +84,11 @@ function walletFactory(Tool) {
         }
         if (err) throw err
   
-        // console.log('createaccount res: ', res)
         let keystoreObj = createKeystore({
           account: params.account,
           password: params.password,
           privateKey: keys.privateKey
         })
-        // console.log('createaccount keystoreObj: ', keystoreObj)
 
         return keystoreObj
   

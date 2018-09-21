@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>account</title>
+  <style>
+    #result {
+      max-width: 800px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>create account</h1>
+
+  <div>
+    <label for="account">account name</label>
+    <input id='account' type="text" name="createaccount" value="account">
+  </div>
+
+  <div>
+    <label for="password">password</label>
+    <input id='password' type="password" name="createaccount" value="password">
+  </div>
+
+  <button id="btn-create">create</button>
+
+  <div id="result">
+
+  </div>
+
+  <script src="../dist/bottos-sdk-js.min.js"></script>
+  <script>
+    var sdk = new BottosWalletSDK()
+
+    var btn = document.querySelector('#btn-create')
+    btn.onclick = () => {
+      const account = document.querySelector('#account').value
+      const password = document.querySelector('#password').value
+
+      let accountParams = {
+        account,
+        password,
+      }
+
+      sdk.Wallet.createAccount(accountParams)
+        .then((keystore) => {
+          // the keystore
+          console.log('Create success')
+          console.log('typeof keystore: ', typeof keystore) // object
+          console.log('Create success, keystore: ', keystore) // {account: "account", crypto: {…}, id: "...", version: 3}
+          document.querySelector('#result').innerText = 'keystore :\n' + JSON.stringify(keystore)
+        })
+        .catch(err => {
+          console.error('Create fail: ', err)
+          document.querySelector('#result').innerText = 'Create fail. Plase open the console to see the error details.'
+        })
+    
+    }
+  </script>
+</body>
+</html>
