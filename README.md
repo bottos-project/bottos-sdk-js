@@ -1,6 +1,8 @@
 # Bottos JavaScript API
 
+You need to run a local Bottos node to use this library.
 
+[Documentation](https://github.com/bottos-project/bottos-sdk-js/wiki/API-Document)
 
 ## Installation
 
