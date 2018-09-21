@@ -34,7 +34,7 @@ In browers:
 Then:
 ```js
 var sdk = new BottosWalletSDK({
-    baseUrl: "http://127.0.0.1:8689/v1"
+    baseUrl: "http://localhost:8689/v1"
 });
 
 ```
@@ -43,18 +43,19 @@ There you go, now you can use it:
 
 ```js
 let accountParams = {
-account: 'account',
-password: 'password',
+    account: 'account',
+    password: 'password',
 }
 
 sdk.Wallet.createAccount(accountParams)
-.then((keystore) => {
-    // the keystore
-    console.log('register success')
-    console.log('typeof keystore: ', typeof keystore) // object
-    console.log('register success, keystore: ', keystore) // {account: "account", crypto: {…}, id: "...", version: 3}
-})
-.catch((err) => console.error('register fail', err))
+    .then((keystore) => {
+        // the keystore
+        console.log('register success')
+        console.log('typeof keystore: ', typeof keystore) // object
+        console.log('register success, keystore: ', keystore)
+        // {account: "account", crypto: {…}, id: "...", version: 3}
+    })
+    .catch((err) => console.error('register fail', err))
 ```
 
 You can find more examples in the [`example`](https://github.com/bottos-project/bottos-sdk-js/tree/master/example) directory.

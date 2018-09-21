@@ -171,8 +171,8 @@ function walletFactory(Tool) {
     .then(res => res.json())
     .then(res => {
       if (!res) throw new Error('Get account info error.')
-      if (res.errcode != 0) throw res
-      return res.result
+      // if (res.errcode != 0) return res
+      return res
     })
   }
 

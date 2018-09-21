@@ -11,7 +11,7 @@ const contractFactory = require('./contractFactory')
 
 
 const defaultConfig = {
-  baseUrl: 'http://127.0.0.1:8689/v1',
+  baseUrl: 'http://localhost:8689/v1',
   version: 1 // version
 }
 
@@ -20,7 +20,7 @@ const defaultConfig = {
  * Represents the BottosWalletSDK.
  * @class
  * @param {Object} config
- * @param {string} [config.baseUrl=http://127.0.0.1:8689/v1]
+ * @param {string} [config.baseUrl=http://localhost:8689/v1]
  * @param {number} [config.version=1]
  */
 function BottosWalletSDK(config) {
@@ -48,10 +48,11 @@ function BottosWalletSDK(config) {
 }
 
 /**
- * myFunction is now MyNamespace#myFunction.
- * @function myFunction
- * @memberof MyNamespace
- * @instance
+ * @function BottosWalletSDK#setBaseUrl
+ * @param {string} baseUrl - The baseUrl used in request.
  */
+BottosWalletSDK.prototype.setBaseUrl =function(baseUrl) {
+  this.config.baseUrl = baseUrl
+}
 
 module.exports = BottosWalletSDK

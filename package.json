@@ -1,8 +1,7 @@
 {
   "name": "bottos-sdk-js",
-  "version": "0.1.0",
-  "main": "./src/index.js",
-  "license": "MIT",
+  "version": "0.1.1",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/bottos-project/bottos-sdk-js.git"
@@ -10,5 +9,11 @@
   "dependencies": {
     "bottos-crypto-js": "^1.0.14",
     "bottos-js-msgpack": "^1.0.2"
-  }
+  },
+  "keywords": [
+    "bottos-sdk-js",
+    "API"
+  ],
+  "author": "VinciXie",
+  "license": "GPL-3.0"
 }
