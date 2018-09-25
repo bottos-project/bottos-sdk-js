@@ -1,5 +1,4 @@
 const BTCryptTool = require('bottos-crypto-js');
-
 const keystore = BTCryptTool.keystore
 keystore.constants.scrypt.n = 1024
 const { getRegisterFetchTemplate, getTransferFetchTemplate } = require('../lib/getFetchTemplate.js')
@@ -64,7 +63,7 @@ function walletFactory(Tool) {
       // 1. create key pair
       const keys = keystore.createKeys()
       // console.log('keys', keys)
-  
+
       const public_key = Tool.buf2hex(keys.publicKey)
       // 2. pack params
       let fetchParams = {
@@ -83,7 +82,7 @@ function walletFactory(Tool) {
           err = res
         }
         if (err) throw err
-  
+
         let keystoreObj = createKeystore({
           account: params.account,
           password: params.password,
@@ -91,7 +90,7 @@ function walletFactory(Tool) {
         })
 
         return keystoreObj
-  
+
       })
     })
 
@@ -119,7 +118,7 @@ function walletFactory(Tool) {
     }
     let originFetchTemplate = getRegisterFetchTemplate(__params)
     let privateKey = referrerInfo.privateKey
-    
+
     // 2. try to register on chain
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
@@ -156,14 +155,14 @@ function walletFactory(Tool) {
    * private method
    */
   // Wallet.signTransaction = function() {
-
+  //
   // }
 
 
   /**
    * @async
    * @function Wallet.getAccountInfo
-   * @param {string} account_name 
+   * @param {string} account_name
    * @returns {Promise<Object>}
    */
   Wallet.getAccountInfo = function (account_name) {

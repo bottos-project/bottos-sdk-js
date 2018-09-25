@@ -1,7 +1,5 @@
 const { addBlockHeader } = require('../lib/getFetchTemplate')
 const packParamToParamArr = require('../lib/packParam')
-const BTCryptTool = require('bottos-crypto-js');
-const keystore = BTCryptTool.keystore
 const { BasicPack } = require('bottos-js-msgpack')
 
 /**
@@ -18,15 +16,15 @@ const { BasicPack } = require('bottos-js-msgpack')
 /**
  * encode the message
  * @private
- * @param {Object} msg 
+ * @param {Object} msg
  * @param {number} msg.version
  * @param {number} msg.cursor_num
  * @param {number} msg.cursor_label
  * @param {number} msg.lifetime
- * @param {string} msg.sender 
- * @param {string} msg.contract 
- * @param {string} msg.method 
- * @param {Array<number>} msg.param 
+ * @param {string} msg.sender
+ * @param {string} msg.contract
+ * @param {string} msg.method
+ * @param {Array<number>} msg.param
  * @param {number} msg.sig_alg
  * @returns {Array<number>}
  */
@@ -54,6 +52,9 @@ const messageProtoEncode = (msg) => {
 
 
 function ToolFactory(config, Api) {
+  const BTCryptTool = config.crypto
+  const keystore = BTCryptTool.keystore
+
   let _defaultParams = {
     version: config.version || 1,
     sender: "bottos",
@@ -102,8 +103,7 @@ function ToolFactory(config, Api) {
    * @returns {Object}
    */
   const processFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
-    let _originFetchTemplate = Object.assign({}, _defaultParams, originFetchTemplate)
-    let fetchTemplate = addBlockHeader(_originFetchTemplate, blockHeader)
+    let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
     let paramArr = packParamToParamArr(fetchTemplate, abi)
     fetchTemplate.param = paramArr
     let signature = signMsg(fetchTemplate, privateKey)
@@ -123,16 +123,17 @@ function ToolFactory(config, Api) {
    * @returns {Promise<Object>}
    */
   Tool.getRequestParams = function (originFetchTemplate, privateKey) {
+    let _originFetchTemplate = Object.assign({}, _defaultParams, originFetchTemplate)
 
     // 如果是内置合约
     if (originFetchTemplate.contract == "bottos") {
       return this._Api.getBlockHeader()
-        .then((blockHeader) => processFetchTemplate(originFetchTemplate, blockHeader, privateKey))
+        .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey))
     }
     // 如果不是内置合约
-    return Api.getAbi(originFetchTemplate.contract)
+    return Api.getAbi(_originFetchTemplate.contract)
     .then(abi => this._Api.getBlockHeader()
-      .then((blockHeader) => processFetchTemplate(originFetchTemplate, blockHeader, privateKey, abi)))
+      .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)))
   }
 
   /**
@@ -165,8 +166,7 @@ function ToolFactory(config, Api) {
       }
     }
 
-    return this._Api.getBlockHeader()
-      .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))
+    return Tool.getRequestParams(params, senderInfo.privateKey)
       .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
       .then(res => res.json())
 
@@ -190,9 +190,9 @@ function ToolFactory(config, Api) {
     } else if (code instanceof ArrayBuffer) {
       code = new Uint8Array(code)
     }
-    
+
     console.assert(code instanceof Uint8Array, 'Type error. param contract_abi: ' + param.contract_abi + ' could not be transcode to Uint8Array')
-    
+
     let params = {
       sender: senderInfo.account,
       method: "deployabi",
@@ -202,16 +202,14 @@ function ToolFactory(config, Api) {
       }
     }
 
-    return this._Api.getBlockHeader()
-      .then((blockHeader) => processFetchTemplate(params, blockHeader, senderInfo.privateKey))
-      // .then(fetchTemplate => console.log('deployCode fetchTemplate: ', fetchTemplate))
+    return Tool.getRequestParams(params, senderInfo.privateKey)
       .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
       .then(res => res.json())
 
   }
 
   return Tool
-  
+
 }
 
 module.exports = ToolFactory

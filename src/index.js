@@ -8,11 +8,13 @@ const ApiFactory = require('./Api')
 const ToolFactory = require('./Tool')
 const walletFactory = require('./walletFactory')
 const contractFactory = require('./contractFactory')
+const BTCryptTool = require('bottos-crypto-js');
 
 
 const defaultConfig = {
   baseUrl: 'http://localhost:8689/v1',
-  version: 1 // version
+  version: 1, // version
+  crypto: BTCryptTool
 }
 
 
@@ -22,6 +24,7 @@ const defaultConfig = {
  * @param {Object} config
  * @param {string} [config.baseUrl=http://localhost:8689/v1]
  * @param {number} [config.version=1]
+ * @param {Object} [config.crypto=BTCryptTool]
  */
 function BottosWalletSDK(config) {
   this.config = Object.assign({}, defaultConfig, config)
