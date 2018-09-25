@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>account</title>
+  <link rel="stylesheet" href="./bootstrap.min.css">
   <style>
     #result {
       max-width: 800px;
@@ -13,52 +14,75 @@
   </style>
 </head>
 <body>
-  <h1>create account</h1>
+  
+  <div class="container">
 
-  <div>
-    <label for="account">account name</label>
-    <input id='account' type="text" name="createaccount" value="account">
-  </div>
-
-  <div>
-    <label for="password">password</label>
-    <input id='password' type="password" name="createaccount" value="password">
-  </div>
-
-  <button id="btn-create">create</button>
-
-  <div id="result">
-
+    <h1>Create account</h1>
+    
+    <form>
+      <div class="form-group">
+        <label for="account">Account name</label>
+        <input type="text" class="form-control" id="account" placeholder="Account">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Password">
+      </div>
+    </form>
+    <button id="btn-create" class="btn btn-default">Submit</button>
+  
+    <div id="result">
+  
+    </div>
+    
   </div>
 
   <script src="../dist/bottos-sdk-js.min.js"></script>
   <script>
-    var sdk = new BottosWalletSDK()
+    const sdk = new BottosWalletSDK()
+    const Wallet = sdk.Wallet
 
-    var btn = document.querySelector('#btn-create')
-    btn.onclick = () => {
+    var keystoreObj = null;
+
+    function createAccount() {
       const account = document.querySelector('#account').value
       const password = document.querySelector('#password').value
+
+      if (account == '' || password == '') {
+        alert('Please input both account and password')
+        return
+      }
 
       let accountParams = {
         account,
         password,
       }
 
-      sdk.Wallet.createAccount(accountParams)
+      Wallet.createAccount(accountParams)
         .then((keystore) => {
           // the keystore
           console.log('Create success')
           console.log('typeof keystore: ', typeof keystore) // object
           console.log('Create success, keystore: ', keystore) // {account: "account", crypto: {…}, id: "...", version: 3}
+          keystoreObj = keystore
           document.querySelector('#result').innerText = 'keystore :\n' + JSON.stringify(keystore)
         })
         .catch(err => {
           console.error('Create fail: ', err)
+          if (err instanceof Error) {
+            console.log('asdfafasdfasdfasdfasdfas')
+            document.querySelector('#result').innerText = err
+            return
+          }
           document.querySelector('#result').innerText = 'Create fail. Plase open the console to see the error details.'
+
         })
-    
+
     }
+
+    var btn = document.querySelector('#btn-create')
+    btn.onclick = createAccount
+    // let privateKey = Wallet.recover(document.querySelector('#password').value, keystoreObj)
   </script>
 </body>
 </html>
