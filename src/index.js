@@ -42,7 +42,7 @@ function BottosWalletSDK(config) {
    * See {@link Wallet}.
    * @instance
    */
-  this.Wallet = walletFactory(this.Tool)
+  this.Wallet = walletFactory(this.config, this.Tool)
   /**
    * See {@link Contract}.
    * @instance

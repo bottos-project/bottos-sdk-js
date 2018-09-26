@@ -1,22 +1,25 @@
-const BTCryptTool = require('bottos-crypto-js');
-const keystore = BTCryptTool.keystore
-keystore.constants.scrypt.n = 1024
 const { getRegisterFetchTemplate, getTransferFetchTemplate } = require('../lib/getFetchTemplate.js')
 
-/**
- * @function Wallet.createAccountByIntro
- * @param {Object} params - the params required for create keystore
- * @param {string} params.account - account
- * @param {string} params.password - password
- * @param {string|Uint8Array} params.privateKey - privateKey
- * @returns {Object} keystore
- */
-const createKeystore = function (params) {
-  const account = params.account,
+function walletFactory(config, Tool) {
+  const BTCryptTool = config.crypto
+
+  const keystore = BTCryptTool.keystore
+  keystore.constants.scrypt.n = 1024
+
+  /**
+   * @function Wallet.createAccountByIntro
+   * @param {Object} params - the params required for create keystore
+   * @param {string} params.account - account
+   * @param {string} params.password - password
+   * @param {string|Uint8Array} params.privateKey - privateKey
+   * @returns {Object} keystore
+   */
+  const createKeystore = function (params) {
+    const account = params.account,
     password = params.password,
     privateKey = params.privateKey
-  return keystore.create({ account, password, privateKey })
-}
+    return keystore.create({ account, password, privateKey })
+  }
 
 
   /**
@@ -24,17 +27,14 @@ const createKeystore = function (params) {
    * @function Wallet.createKeys
    * @returns {Object} keys
    */
-const createKeys = function () {
-  let { privateKey, publicKey } = keystore.createKeys()
-  // console.log('privateKey, publicKey', {privateKey, publicKey})
-  return {
-    privateKey: BTCryptTool.buf2hex(privateKey),
-    publicKey: BTCryptTool.buf2hex(publicKey)
+  const createKeys = function () {
+    let { privateKey, publicKey } = keystore.createKeys()
+    // console.log('privateKey, publicKey', {privateKey, publicKey})
+    return {
+      privateKey: BTCryptTool.buf2hex(privateKey),
+      publicKey: BTCryptTool.buf2hex(publicKey)
+    }
   }
-}
-
-
-function walletFactory(Tool) {
 
   /**
    * Wallet namespace
