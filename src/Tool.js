@@ -63,6 +63,7 @@ function ToolFactory(config, Api) {
     param: {},
     sig_alg: 1
   }
+
   /**
    * @namespace Tool
    */
@@ -138,6 +139,7 @@ function ToolFactory(config, Api) {
 
   /**
    * Deploy a contract.
+   * @private
    * @async
    * @function Tool.deployContract
    * @param {Object} param
@@ -175,6 +177,7 @@ function ToolFactory(config, Api) {
   /**
    * Deploy an abi.
    * @async
+   * @private
    * @function Tool.deployABI
    * @param {Object} param
    * @param {string|Uint8Array|ArrayBuffer} param.contract_abi - ABI content or file buffer.

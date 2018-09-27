@@ -45,59 +45,6 @@ function walletFactory(config, Tool) {
   Wallet.createKeys = createKeys
 
   /**
-   * create account
-   * @async
-   * @function Wallet.createAccount
-   * @param {Object} params - the params
-   * @param {string} params.account - account
-   * @param {string} params.password - password
-   * @returns {Promise<Object>}
-   */
-  Wallet.createAccount = function (params) {
-    return Tool._Api.request('/account/info', {account_name:params.account})
-    .then(res => res.json())
-    .then(res => {
-      if (!res) throw new Error('Get account info error.')
-      if (res.errcode == 0) throw new Error('Account ' + params.account + ' exist.');
-
-      // 1. create key pair
-      const keys = keystore.createKeys()
-      // console.log('keys', keys)
-
-      const public_key = Tool.buf2hex(keys.publicKey)
-      // 2. pack params
-      let fetchParams = {
-        account_name: params.account,
-        public_key,
-      }
-
-      // 3. try to register on chain
-      return Tool._Api.request('/wallet/createaccount', fetchParams)
-      .then(res => res.json())
-      .then(res => {
-        var err = null
-        if (!res) {
-          err = new Error('createAccountWithIntro error')
-        } else if (res.errcode != 0) {
-          err = res
-        }
-        if (err) throw err
-
-        let keystoreObj = createKeystore({
-          account: params.account,
-          password: params.password,
-          privateKey: keys.privateKey
-        })
-
-        return keystoreObj
-
-      })
-    })
-
-  }
-
-
-  /**
    * register account on chain
    * @async
    * @function Wallet.createAccountWithIntro
@@ -186,30 +133,66 @@ function walletFactory(config, Tool) {
    * @returns {Promise<Object>}
    */
   Wallet.sendTransaction = function (params, privateKey) {
-    let promise = Tool._Api.getBlockHeader()
-    return promise.then((blockHeader) => {
-      let originFetchTemplate = getTransferFetchTemplate(params)
-
-      let fetchTemplate = processFetchTemplate(originFetchTemplate, blockHeader, privateKey)
-
-      return Tool._Api.request('/transaction/send', fetchTemplate)
-        .then(res => res.json())
-        .then(res => {
-          if (!res) {
-            throw new Error('createAccountWithIntro error')
-          } else if (res.errcode != 0) {
-            throw new Error(res.msg)
-          } else {
-            return res
-          }
-        })
-
-    })
+    let originFetchTemplate = getTransferFetchTemplate(params)
+    return Tool.getRequestParams(originFetchTemplate, privateKey)
+      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
 
   }
 
-  return Wallet
+  /**
+   * @async
+   * @function Wallet.stake
+   * @param {number} amount
+   * @param {string|Uint8Array} privateKey
+   * @returns {Promise<Object>}
+   */
+  Wallet.stake = function (amount, privateKey) {
+    let originFetchTemplate = {
+      method: "stake",
+      param: { amount },
+    }
+    return Tool.getRequestParams(originFetchTemplate, privateKey)
+      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
+  }
 
+  /**
+   * @async
+   * @function Wallet.unstake
+   * @param {number} amount
+   * @param {string|Uint8Array} privateKey
+   * @returns {Promise<Object>}
+   */
+  Wallet.unstake = function (amount, privateKey) {
+    let originFetchTemplate = {
+      method: "unstake",
+      param: { amount },
+    }
+    return Tool.getRequestParams(originFetchTemplate, privateKey)
+      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
+  }
+  
+  /**
+   * @async
+   * @function Wallet.claim
+   * @param {number} amount
+   * @param {string|Uint8Array} privateKey
+   * @returns {Promise<Object>}
+   */
+  Wallet.claim = function (amount, privateKey) {
+    let originFetchTemplate = {
+      method: "claim",
+      param: { amount },
+    }
+    return Tool.getRequestParams(originFetchTemplate, privateKey)
+      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
+  }
+
+
+  return Wallet
 }
 
 module.exports = walletFactory
