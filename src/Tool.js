@@ -82,7 +82,7 @@ function ToolFactory(config, Api) {
 
   /**
    * @param {Object} fetchTemplate
-   * @param {string|Uint8Array} privateKey
+   * @param {(string|Uint8Array)} privateKey
    * @returns {string} signature
    */
   const signMsg = function (fetchTemplate, privateKey) {
@@ -100,7 +100,7 @@ function ToolFactory(config, Api) {
    * @private
    * @param {originFetchTemplate} originFetchTemplate
    * @param {Object} blockHeader
-   * @param {string|Uint8Array} privateKey
+   * @param {(string|Uint8Array)} privateKey
    * @returns {Object}
    */
   const processFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
@@ -120,7 +120,7 @@ function ToolFactory(config, Api) {
    * @async
    * @function Tool.getRequestParams
    * @param {originFetchTemplate} originFetchTemplate
-   * @param {string|Uint8Array} privateKey - Your private key.
+   * @param {(string|Uint8Array)} privateKey - Your private key.
    * @returns {Promise<Object>}
    */
   Tool.getRequestParams = function (originFetchTemplate, privateKey) {
@@ -145,10 +145,10 @@ function ToolFactory(config, Api) {
    * @param {Object} param
    * @param {number} [param.vm_type=1] - vm_type, now is 1.
    * @param {number} [param.vm_version=1] - vm_version, now is 1.
-   * @param {Uint8Array|ArrayBuffer} param.contract_code - wasm file buffer.
+   * @param {(Uint8Array|ArrayBuffer)} param.contract_code - wasm file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
-   * @param {string|Uint8Array} senderInfo.privateKey - sender's privateKey
+   * @param {(string|Uint8Array)} senderInfo.privateKey - sender's privateKey
    * @returns {Promise<Object>}
    */
   Tool.deployCode = function (param, senderInfo) {
@@ -180,10 +180,10 @@ function ToolFactory(config, Api) {
    * @private
    * @function Tool.deployABI
    * @param {Object} param
-   * @param {string|Uint8Array|ArrayBuffer} param.contract_abi - ABI content or file buffer.
+   * @param {(string|Uint8Array|ArrayBuffer)} param.contract_abi - ABI content or file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
-   * @param {string|Uint8Array} senderInfo.privateKey - sender's privateKey
+   * @param {(string|Uint8Array)} senderInfo.privateKey - sender's privateKey
    * @returns {Promise<Object>}
    */
   Tool.deployABI = function (param, senderInfo) {

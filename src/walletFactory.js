@@ -11,7 +11,7 @@ function walletFactory(config, Tool) {
    * @param {Object} params - the params required for create keystore
    * @param {string} params.account - account
    * @param {string} params.password - password
-   * @param {string|Uint8Array} params.privateKey - privateKey
+   * @param {(string|Uint8Array)} params.privateKey - privateKey
    * @returns {Object} keystore
    */
   const createKeystore = function (params) {
@@ -37,7 +37,6 @@ function walletFactory(config, Tool) {
   }
 
   /**
-   * Wallet namespace
    * @namespace Wallet
    */
   const Wallet = {}
@@ -50,10 +49,10 @@ function walletFactory(config, Tool) {
    * @function Wallet.createAccountWithIntro
    * @param {Object} params - The params
    * @param {string} params.account - The new user's account
-   * @param {string|Uint8Array} params.publicKey - The publicKey provided by the new user
+   * @param {(string|Uint8Array)} params.publicKey - The publicKey provided by the new user
    * @param {Object} referrerInfo - The referrer
    * @param {string} referrerInfo.account - referrer's account
-   * @param {string|Uint8Array} referrerInfo.privateKey - referrer's privateKey
+   * @param {(string|Uint8Array)} referrerInfo.privateKey - referrer's privateKey
    * @returns {Promise<Object>}
    */
   Wallet.createAccountWithIntro = function (params, referrerInfo) {
@@ -128,8 +127,8 @@ function walletFactory(config, Tool) {
    * @param {Object} params
    * @param {string} params.from
    * @param {string} params.to
-   * @param {string|number} params.value
-   * @param {string|Uint8Array} privateKey
+   * @param {(string|number)} params.value
+   * @param {string} privateKey
    * @returns {Promise<Object>}
    */
   Wallet.sendTransaction = function (params, privateKey) {
@@ -144,7 +143,7 @@ function walletFactory(config, Tool) {
    * @async
    * @function Wallet.stake
    * @param {number} amount
-   * @param {string|Uint8Array} privateKey
+   * @param {(string|Uint8Array)} privateKey
    * @returns {Promise<Object>}
    */
   Wallet.stake = function (amount, privateKey) {
@@ -161,7 +160,7 @@ function walletFactory(config, Tool) {
    * @async
    * @function Wallet.unstake
    * @param {number} amount
-   * @param {string|Uint8Array} privateKey
+   * @param {(string|Uint8Array)} privateKey
    * @returns {Promise<Object>}
    */
   Wallet.unstake = function (amount, privateKey) {
@@ -173,12 +172,12 @@ function walletFactory(config, Tool) {
       .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
       .then(res => res.json())
   }
-  
+
   /**
    * @async
    * @function Wallet.claim
    * @param {number} amount
-   * @param {string|Uint8Array} privateKey
+   * @param {(string|Uint8Array)} privateKey
    * @returns {Promise<Object>}
    */
   Wallet.claim = function (amount, privateKey) {
