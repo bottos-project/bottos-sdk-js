@@ -69,15 +69,15 @@ function walletFactory(config, Tool) {
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
       .then(res => res.json())
-      .then(res => {
-        if (!res) {
-          throw new Error('createAccountWithIntro error')
-        } else if (res.errcode != 0) {
-          throw new Error(res.msg)
-        } else {
-          return res
-        }
-      })
+      // .then(res => {
+      //   if (!res) {
+      //     throw new Error('createAccountWithIntro error')
+      //   } else if (res.errcode != 0) {
+      //     throw new Error(res.msg)
+      //   } else {
+      //     return res
+      //   }
+      // })
 
   }
 
@@ -143,12 +143,16 @@ function walletFactory(config, Tool) {
    * @async
    * @function Wallet.stake
    * @param {number} amount
-   * @param {(string|Uint8Array)} privateKey
+   * @param {Object} senderInfo
+   * @param {string} senderInfo.account
+   * @param {(string|Uint8Array)} senderInfo.privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.stake = function (amount, privateKey) {
+  Wallet.stake = function (amount, senderInfo) {
+    const { account, privateKey } = senderInfo
     let originFetchTemplate = {
       method: "stake",
+      sender: account,
       param: { amount },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
@@ -160,13 +164,55 @@ function walletFactory(config, Tool) {
    * @async
    * @function Wallet.unstake
    * @param {number} amount
-   * @param {(string|Uint8Array)} privateKey
+   * @param {Object} senderInfo
+   * @param {string} senderInfo.account
+   * @param {(string|Uint8Array)} senderInfo.privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.unstake = function (amount, privateKey) {
+  Wallet.unstake = function (amount, senderInfo) {
+    const { account, privateKey } = senderInfo
     let originFetchTemplate = {
       method: "unstake",
+      sender: account,
       param: { amount },
+    }
+    return Tool.getRequestParams(originFetchTemplate, privateKey)
+    .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+    .then(res => res.json())
+  }
+
+  /**
+   * @async
+   * @function Wallet.claim
+   * @param {number} amount
+   * @param {Object} senderInfo
+   * @param {string} senderInfo.account
+   * @param {(string|Uint8Array)} senderInfo.privateKey
+   * @returns {Promise<Object>}
+   */
+  Wallet.claim = function (amount, senderInfo) {
+    const { account, privateKey } = senderInfo
+    let originFetchTemplate = {
+      method: "claim",
+      sender: account,
+      param: { amount },
+    }
+    return Tool.getRequestParams(originFetchTemplate, privateKey)
+      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+      .then(res => res.json())
+  }
+
+
+  function votedelegate(delegate, senderInfo, voteop) {
+    const { account, privateKey } = senderInfo
+    let originFetchTemplate = {
+      method: "votedelegate",
+      sender: account,
+      param: {
+        voteop,
+        voter: account,
+        delegate: delegate
+      },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
@@ -175,19 +221,28 @@ function walletFactory(config, Tool) {
 
   /**
    * @async
-   * @function Wallet.claim
-   * @param {number} amount
-   * @param {(string|Uint8Array)} privateKey
+   * @function Wallet.vote
+   * @param {string} delegate
+   * @param {Object} senderInfo
+   * @param {string} senderInfo.account
+   * @param {(string|Uint8Array)} senderInfo.privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.claim = function (amount, privateKey) {
-    let originFetchTemplate = {
-      method: "claim",
-      param: { amount },
-    }
-    return Tool.getRequestParams(originFetchTemplate, privateKey)
-      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
-      .then(res => res.json())
+  Wallet.vote = function (delegate, senderInfo) {
+    return votedelegate(delegate, senderInfo, 1)
+  }
+
+  /**
+   * @async
+   * @function Wallet.cancelVote
+   * @param {string} delegate
+   * @param {Object} senderInfo
+   * @param {string} senderInfo.account
+   * @param {(string|Uint8Array)} senderInfo.privateKey
+   * @returns {Promise<Object>}
+   */
+  Wallet.cancelVote = function (delegate, senderInfo) {
+    return votedelegate(delegate, senderInfo, 0)
   }
 
 

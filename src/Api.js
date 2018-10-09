@@ -18,7 +18,7 @@ const Api = {
 
 /**
  * @ignore
- * @param {Object} config 
+ * @param {Object} config
  * @param {string} config.baseUrl
  * @param {number} config.version
  */
@@ -27,24 +27,24 @@ function ApiFactory(config) {
   /**
    * @function Api.request
    * @param {string} url
-   * @param {Object} params 
-   * @param {string} [method=POST] 
+   * @param {Object} params
+   * @param {string} [method=POST]
    */
   function simpleFetch(url, params, method = 'POST') {
-  
+
     if (method.toUpperCase() == 'GET') {
       let paramStr = ''
       if (params && typeof params == 'object') {
         paramStr = '?' + querystring.stringify(params)
       }
-  
+
       const CORSOptions = {
         method: 'GET',
         mode: 'cors',
       }
       return fetch(config.baseUrl + url + paramStr, CORSOptions)
     }
-  
+
     let __options = {
       method: 'POST',
       mode: 'cors',
@@ -53,13 +53,13 @@ function ApiFactory(config) {
       // },
       body: JSON.stringify(params)
     }
-  
+
     return fetch(config.baseUrl + url, __options)
   }
 
 
   Api.request = simpleFetch
-  
+
   /**
    * Returns the abi. If callback is undefined, this function will return a promise.
    * @function Api.getAbi
@@ -71,15 +71,17 @@ function ApiFactory(config) {
     const cb = callback
     const url = '/contract/abi'
     let promise = simpleFetch(url, { contract }).then(res => res.json())
-    
+
     if (!cb) {
       return promise.then(res => {
         if (!res) {
           throw new Error('Get abi error.')
         } else if (res.errcode != 0) {
           throw res
-        } else {
+        } else if (typeof res.result == 'string') {
           return JSON.parse(res.result)
+        } else {
+          return res.result
         }
       })
     }
@@ -128,7 +130,7 @@ function ApiFactory(config) {
         }
       })
     }
-    
+
     promise.then((res) => {
       var err = null, result;
       if (!res) {

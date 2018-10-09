@@ -127,7 +127,7 @@ function ToolFactory(config, Api) {
     let _originFetchTemplate = Object.assign({}, _defaultParams, originFetchTemplate)
 
     // 如果是内置合约
-    if (originFetchTemplate.contract == "bottos") {
+    if (_originFetchTemplate.contract == "bottos") {
       return this._Api.getBlockHeader()
         .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey))
     }
@@ -135,80 +135,6 @@ function ToolFactory(config, Api) {
     return Api.getAbi(_originFetchTemplate.contract)
     .then(abi => this._Api.getBlockHeader()
       .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)))
-  }
-
-  /**
-   * Deploy a contract.
-   * @private
-   * @async
-   * @function Tool.deployContract
-   * @param {Object} param
-   * @param {number} [param.vm_type=1] - vm_type, now is 1.
-   * @param {number} [param.vm_version=1] - vm_version, now is 1.
-   * @param {(Uint8Array|ArrayBuffer)} param.contract_code - wasm file buffer.
-   * @param {Object} senderInfo - The sender
-   * @param {string} senderInfo.account - sender's account
-   * @param {(string|Uint8Array)} senderInfo.privateKey - sender's privateKey
-   * @returns {Promise<Object>}
-   */
-  Tool.deployCode = function (param, senderInfo) {
-    let code = param.contract_code
-    if (code instanceof ArrayBuffer) {
-      code = new Uint8Array(code)
-    }
-
-    let params = {
-      sender: senderInfo.account,
-      method: "deploycode",
-      param: {
-        contract: senderInfo.account,
-        vm_type: param.vm_type != undefined ? param.vm_type : 1,
-        vm_version: param.vm_version != undefined ? param.vm_version : 1,
-        contract_code: code
-      }
-    }
-
-    return Tool.getRequestParams(params, senderInfo.privateKey)
-      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
-      .then(res => res.json())
-
-  }
-
-  /**
-   * Deploy an abi.
-   * @async
-   * @private
-   * @function Tool.deployABI
-   * @param {Object} param
-   * @param {(string|Uint8Array|ArrayBuffer)} param.contract_abi - ABI content or file buffer.
-   * @param {Object} senderInfo - The sender
-   * @param {string} senderInfo.account - sender's account
-   * @param {(string|Uint8Array)} senderInfo.privateKey - sender's privateKey
-   * @returns {Promise<Object>}
-   */
-  Tool.deployABI = function (param, senderInfo) {
-    let code = param.contract_abi
-    if (typeof code == 'string') {
-      code = BasicPack.PackStr16(code).slice(3)
-    } else if (code instanceof ArrayBuffer) {
-      code = new Uint8Array(code)
-    }
-
-    console.assert(code instanceof Uint8Array, 'Type error. param contract_abi: ' + param.contract_abi + ' could not be transcode to Uint8Array')
-
-    let params = {
-      sender: senderInfo.account,
-      method: "deployabi",
-      param: {
-        contract: senderInfo.account,
-        contract_abi: code
-      }
-    }
-
-    return Tool.getRequestParams(params, senderInfo.privateKey)
-      .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
-      .then(res => res.json())
-
   }
 
   return Tool
