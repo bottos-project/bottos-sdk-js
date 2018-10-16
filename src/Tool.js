@@ -1,5 +1,6 @@
 const { addBlockHeader } = require('../lib/getFetchTemplate')
 const packParamToParamArr = require('../lib/packParam')
+const PackBin16 = require('../lib/packParam').PackBin16
 const { BasicPack } = require('bottos-js-msgpack')
 
 /**
@@ -37,15 +38,11 @@ const messageProtoEncode = (msg) => {
   let pSender = BasicPack.PackStr16(msg.sender)
   let pContract = BasicPack.PackStr16(msg.contract)
   let pMethod = BasicPack.PackStr16(msg.method)
-  let pParam = BasicPack.PackBin16(Uint8Array.from(msg.param))
+  let pParam = PackBin16(new Uint8Array(msg.param))
 
-  let uint8Param = new Uint8Array(pParam.byteLength)
-  for (let i = 0; i < pParam.byteLength; i++) {
-    uint8Param[i] = pParam[i]
-  }
   let pSigalg = BasicPack.PackUint32(msg.sig_alg)
 
-  let buf = [...pArraySize, ...pVersion, ...pCursorNum, ...pCursorLabel, ...pLifeTime, ...pSender, ...pContract, ...pMethod, ...uint8Param, ...pSigalg]
+  let buf = [...pArraySize, ...pVersion, ...pCursorNum, ...pCursorLabel, ...pLifeTime, ...pSender, ...pContract, ...pMethod, ...pParam, ...pSigalg]
 
   return buf
 }
@@ -140,5 +137,7 @@ function ToolFactory(config, Api) {
   return Tool
 
 }
+
+
 
 module.exports = ToolFactory

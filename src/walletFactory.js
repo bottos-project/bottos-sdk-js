@@ -136,7 +136,6 @@ function walletFactory(config, Tool) {
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
       .then(res => res.json())
-
   }
 
   /**
