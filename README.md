@@ -18,6 +18,11 @@ npm install bottos-sdk-js
 yarn add bottos-sdk-js
 ```
 
+### file
+
+You can find the bottos-sdk-js.min.js file on [release page](https://github.com/bottos-project/bottos-sdk-js/releases)
+
+
 ## Usage
 
 In node:
