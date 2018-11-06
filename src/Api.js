@@ -91,8 +91,10 @@ function ApiFactory(config) {
         err = new Error('Get abi error.')
       } else if (res.errcode != 0) {
         err = res
-      } else {
+      } else if (typeof res.result == 'string') {
         result = JSON.parse(res.result)
+      } else {
+        result = res.result
       }
       cb(err, result)
     })

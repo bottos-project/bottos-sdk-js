@@ -14,7 +14,8 @@ const Abi = {
       "fields": {
         "from": "string",
         "to": "string",
-        "value": "uint256"
+        "value": "uint256",
+        "memo": "string"
       }
     },
     {

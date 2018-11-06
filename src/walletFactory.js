@@ -4,7 +4,7 @@ function walletFactory(config, Tool) {
   const BTCryptTool = config.crypto
 
   const keystore = BTCryptTool.keystore
-  keystore.constants.scrypt.n = 1024
+  keystore.constants.scrypt.n = 262144
 
   /**
    * @function Wallet.createAccountByIntro
@@ -128,6 +128,7 @@ function walletFactory(config, Tool) {
    * @param {string} params.from
    * @param {string} params.to
    * @param {(string|number)} params.value
+   * @param {string} [params.memo] 不能超过 32 个字节，并且要过滤敏感词，这里只做长度限制
    * @param {string} privateKey
    * @returns {Promise<Object>}
    */
