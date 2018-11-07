@@ -7,7 +7,7 @@
 /coverage
 
 # production
-/build
+/dist
 
 # package app
 /packageApp
