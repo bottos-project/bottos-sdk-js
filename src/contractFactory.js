@@ -20,7 +20,7 @@ function contractFactory(Tool) {
    * @param {Uint8Array|ArrayBuffer} param.contract_code - wasm file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
-   * @param {string|Uint8Array} senderInfo.privateKey - sender's privateKey
+   * @param {string|Buffer} senderInfo.privateKey - sender's privateKey
    * @returns {Promise<Object>}
    */
   Contract.deployCode = function (param, senderInfo) {
@@ -54,7 +54,7 @@ function contractFactory(Tool) {
    * @param {string|Uint8Array|ArrayBuffer} param.contract_abi - ABI content or file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
-   * @param {string|Uint8Array} senderInfo.privateKey - sender's privateKey
+   * @param {string|Buffer} senderInfo.privateKey - sender's privateKey
    * @returns {Promise<Object>}
    */
   Contract.deployABI = function (param, senderInfo) {
@@ -87,7 +87,7 @@ function contractFactory(Tool) {
    * @async
    * @function Contract.callContract
    * @param {Object} originFetchTemplate
-   * @param {string|Uint8Array} privateKey
+   * @param {string|Buffer} privateKey
    * @returns {Promise<Object>}
    */
   Contract.callContract = function (originFetchTemplate, privateKey) {

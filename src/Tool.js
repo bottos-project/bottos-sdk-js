@@ -79,7 +79,7 @@ function ToolFactory(config, Api) {
 
   /**
    * @param {Object} fetchTemplate
-   * @param {(string|Uint8Array)} privateKey
+   * @param {(string|Buffer)} privateKey
    * @returns {string} signature
    */
   const signMsg = function (fetchTemplate, privateKey) {
@@ -97,7 +97,7 @@ function ToolFactory(config, Api) {
    * @private
    * @param {originFetchTemplate} originFetchTemplate
    * @param {Object} blockHeader
-   * @param {(string|Uint8Array)} privateKey
+   * @param {(string|Buffer)} privateKey
    * @returns {Object}
    */
   const processFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
@@ -117,7 +117,7 @@ function ToolFactory(config, Api) {
    * @async
    * @function Tool.getRequestParams
    * @param {originFetchTemplate} originFetchTemplate
-   * @param {(string|Uint8Array)} privateKey - Your private key.
+   * @param {(string|Buffer)} privateKey - Your private key.
    * @returns {Promise<Object>}
    */
   Tool.getRequestParams = function (originFetchTemplate, privateKey) {
@@ -137,7 +137,6 @@ function ToolFactory(config, Api) {
   return Tool
 
 }
-
 
 
 module.exports = ToolFactory
