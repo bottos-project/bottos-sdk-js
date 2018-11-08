@@ -1,5 +1,4 @@
 
-
 type FunctionCallback = (err: any, result: any) => void;
 
 interface OriginFetchTemplate {
@@ -32,92 +31,104 @@ type StakeLike = (amount: number, senderInfo: SenderInfo) => Promise<any>;
 
 type VoteLike = (delegate: string, senderInfo: SenderInfo) => Promise<any>;
 
-declare namespace Api {
-  let chain_id: string;
+interface Api {
+  chain_id: string;
 
-  function request(url: string, params: any, method?: string): Promise<Response>;
+  request(url: string, params: any, method?: string): Promise<Response>;
 
-  function getAbi(contract: string): Promise<Response>;
-  function getAbi(contract: string, callback: FunctionCallback): void;
+  getAbi(contract: string): Promise<Response>;
+  getAbi(contract: string, callback: FunctionCallback): void;
 
-  function getBlockHeader(): Promise<Response>;
-  function getBlockHeader(callback: FunctionCallback): void;
-
-}
-
-declare namespace Tool {
-
-  const _Api: Api;
-
-  function buf2hex(b: Buffer | string): string;
-
-  function getRequestParams(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<any>;
+  getBlockHeader(): Promise<Response>;
+  getBlockHeader(callback: FunctionCallback): void;
 
 }
 
-declare namespace Wallet {
+interface Tool {
 
-  function createKeys(): Keypairs;
+  _Api: Api;
 
-  function createAccountWithIntro(params: {
+  buf2hex(b: Buffer | string): string;
+
+  getRequestParams(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<any>;
+
+}
+
+interface Wallet {
+
+  createKeys(): Keypairs;
+
+  createAccountWithIntro(params: {
     account: string;
     publicKey: Buffer | string;
   }, referrerInfo: SenderInfo): Promise<any>;
 
-  function createAccountByIntro(params: {
+  createAccountByIntro(params: {
     account: string;
     password: string;
     privateKey: Buffer | string;
   }): KeystoreStructure;
 
-  function recover(password: string, keyObject: KeystoreStructure): Buffer;
+  recover(password: string, keyObject: KeystoreStructure): Buffer;
 
-  function getAccountInfo(account: string): Promise<any>;
+  getAccountInfo(account: string): Promise<any>;
 
-  function sendTransaction(params: {
+  sendTransaction(params: {
     from: string;
     to: string;
     value: string | number;
     memo?: string;
   }, privateKey: Buffer | string): Promise<any>;
 
-  const stake: StakeLike;
-  const unstake: StakeLike;
-  const claim: StakeLike;
-  
-  const vote: VoteLike;
-  const cancelVote: VoteLike;
+  stake: StakeLike;
+  unstake: StakeLike;
+  claim: StakeLike;
+
+  vote: VoteLike;
+  cancelVote: VoteLike;
 }
 
 
-declare namespace Contract {
-  function deployCode(param: {
+interface Contract {
+  deployCode(param: {
     vm_type?: number;
     vm_version?: number;
     contract_code: Uint8Array | ArrayBuffer;
   }, senderInfo: SenderInfo): Promise<any>;
 
-  function deployABI(param: {
+  deployABI(param: {
     contract_abi: string | Uint8Array | ArrayBuffer
   }, senderInfo: SenderInfo): Promise<any>;
 
-  function callContract(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<any>;
+  callContract(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<any>;
 }
 
-declare namespace BottosWalletSDK {
-  let config: {
+export interface Config {
+  baseUrl?: string;
+  version?: number;
+  crypto?: any;
+}
+
+export interface SDK {
+  config: {
     baseUrl: string;
     version: number;
     crypto: any;
   };
 
-  const Api: Api;
+  Api: Api;
 
-  const Tool: Tool;
+  Tool: Tool;
 
-  const Wallet: Wallet;
+  Wallet: Wallet;
 
-  const Contract: Contract;
+  Contract: Contract;
 }
 
-export = BottosWalletSDK;
+interface BottosConstructor {
+  new(config?: Config): SDK;
+}
+
+declare const BottosWalletSDK: BottosConstructor
+
+export default BottosWalletSDK;

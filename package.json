@@ -1,6 +1,6 @@
 {
   "name": "bottos-sdk-js",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/bottos-sdk-js.min.js",
   "module": "src/index.js",
   "typings": "./index.d.ts",
@@ -8,7 +8,8 @@
     "dist",
     "lib",
     "src",
-    "index.d.ts"
+    "index.d.ts",
+    "Abi.js"
   ],
   "repository": {
     "type": "git",
