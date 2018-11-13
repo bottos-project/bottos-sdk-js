@@ -5,8 +5,10 @@ You need to run a local Bottos node to use this library.
 The SDK supports below features:
 
 1. wallet creation;
-2. smart contract call
-3. contract deplyment
+2. smart contract calling
+3. smart contract deplyment
+4. Transaction,stake
+4. connection management to chain (to do)
 
 
 
