@@ -2,6 +2,14 @@
 
 You need to run a local Bottos node to use this library.
 
+The SDK supports below features:
+
+1. wallet creation;
+2. smart contract call
+3. contract deplyment
+
+
+
 [Documentation](https://github.com/bottos-project/bottos-sdk-js/wiki/API-Document)
 
 ## Installation
