@@ -1,5 +1,7 @@
 const { getRegisterFetchTemplate, getTransferFetchTemplate } = require('../lib/getFetchTemplate.js')
 
+const accountReg = /^[a-z][a-z0-9]{2,20}$/
+
 function walletFactory(config, Tool) {
   const BTCryptTool = config.crypto
 
@@ -17,7 +19,9 @@ function walletFactory(config, Tool) {
   const createKeystore = function (params) {
     const account = params.account,
     password = params.password,
-    privateKey = params.privateKey
+    privateKey = params.privateKey;
+    accountReg.test(account)
+    if (!accountReg.test(account)) throw new Error('Invalid account ' + account)
     return keystore.create({ account, password, privateKey })
   }
 

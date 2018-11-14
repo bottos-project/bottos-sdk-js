@@ -4,12 +4,11 @@ You need to run a local Bottos node to use this library.
 
 The SDK supports below features:
 
-1. wallet creation;
+1. wallet creation
 2. smart contract calling
 3. smart contract deplyment
-4. Transaction,stake
-4. connection management to chain (to do)
-
+4. Transaction, stake
+5. connection management to chain (to do)
 
 
 [Documentation](https://github.com/bottos-project/bottos-sdk-js/wiki/API-Document)
@@ -42,7 +41,7 @@ var BottosWalletSDK = require('bottos-sdk-js');
 
 In browers:
 ```html
-<script src="path/to/bottos-sdk-js.min.js" crossorigin></script>
+<script src="path/to/bottos-sdk-js.min.js"></script>
 
 ```
 
@@ -57,20 +56,9 @@ var sdk = new BottosWalletSDK({
 There you go, now you can use it:
 
 ```js
-let accountParams = {
-    account: 'account',
-    password: 'password',
-}
+const Keypairs = Wallet.createKeys()
 
-sdk.Wallet.createAccount(accountParams)
-    .then((keystore) => {
-        // the keystore
-        console.log('register success')
-        console.log('typeof keystore: ', typeof keystore) // object
-        console.log('register success, keystore: ', keystore)
-        // {account: "account", crypto: {…}, id: "...", version: 3}
-    })
-    .catch((err) => console.error('register fail', err))
+console.log('Keypairs', Keypairs)
 ```
 
 You can find more examples in the [`example`](https://github.com/bottos-project/bottos-sdk-js/tree/master/example) directory.

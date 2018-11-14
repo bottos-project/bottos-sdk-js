@@ -7,32 +7,53 @@
   <title>account</title>
   <link rel="stylesheet" href="./bootstrap.min.css">
   <style>
-    #result {
+    .result {
+      margin-top: 10px;
       max-width: 800px;
       word-break: break-word;
     }
   </style>
 </head>
 <body>
-  
+
   <div class="container">
 
-    <h1>Create account</h1>
+    <h1>Keypairs and Keystore</h1>
+
+    <h2>Create Keypairs</h2>
+
+    <button id="btn-createKeys" class="btn btn-default">Create Keypairs</button>
+  
+    <div class="result">
+      <p>publicKey:</p>
+      <p id='publicKey'></p>
+      <p>privateKey:</p>
+      <p id='privateKey'></p>
+    </div>
     
+
+    <h2>Create Keystore</h2>
+
     <form>
       <div class="form-group">
         <label for="account">Account name</label>
         <input type="text" class="form-control" id="account" placeholder="Account">
       </div>
       <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Password">
+        <label for="form-password">Password</label>
+        <input type="password" class="form-control" id="form-password" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <label for="form-privateKey">privateKey</label>
+        <input type="text" class="form-control" id="form-privateKey" placeholder="PrivateKey">
       </div>
     </form>
-    <button id="btn-create" class="btn btn-default">Submit</button>
-  
-    <div id="result">
-  
+
+    <button id="btn-createKeystore" class="btn btn-default">Create Keystore</button>
+
+    <div class="result">
+      <p>Keystore:</p>
+      <p id='Keystore'></p>
     </div>
     
   </div>
@@ -44,44 +65,35 @@
 
     var keystoreObj = null;
 
-    function createAccount() {
-      const account = document.querySelector('#account').value
-      const password = document.querySelector('#password').value
+    function createKeypairs() {
 
-      if (account == '' || password == '') {
-        alert('Please input both account and password')
-        return
-      }
-
-      let accountParams = {
-        account,
-        password,
-      }
-
-      Wallet.createAccount(accountParams)
-        .then((keystore) => {
-          // the keystore
-          console.log('Create success')
-          console.log('typeof keystore: ', typeof keystore) // object
-          console.log('Create success, keystore: ', keystore) // {account: "account", crypto: {…}, id: "...", version: 3}
-          keystoreObj = keystore
-          document.querySelector('#result').innerText = 'keystore :\n' + JSON.stringify(keystore)
-        })
-        .catch(err => {
-          console.error('Create fail: ', err)
-          if (err instanceof Error) {
-            console.log('asdfafasdfasdfasdfasdfas')
-            document.querySelector('#result').innerText = err
-            return
-          }
-          document.querySelector('#result').innerText = 'Create fail. Plase open the console to see the error details.'
-
-        })
+      const Keypairs = Wallet.createKeys()
+      document.querySelector('#publicKey').innerText = Keypairs.publicKey
+      document.querySelector('#privateKey').innerText = Keypairs.privateKey
 
     }
 
-    var btn = document.querySelector('#btn-create')
-    btn.onclick = createAccount
+    var btn1 = document.querySelector('#btn-createKeys')
+    btn1.onclick = createKeypairs
+    
+
+    function createKeystore() {
+
+      const account = document.querySelector('#account').value
+      const password = document.querySelector('#form-password').value
+      const privateKey = document.querySelector('#form-privateKey').value
+
+      const keystoreObj = Wallet.createAccountByIntro({
+        account, password, privateKey
+      })
+
+      document.querySelector('#Keystore').innerText = JSON.stringify(keystoreObj)
+
+    }
+
+    var btn2 = document.querySelector('#btn-createKeystore')
+    btn2.onclick = createKeystore
+
     // let privateKey = Wallet.recover(document.querySelector('#password').value, keystoreObj)
   </script>
 </body>
