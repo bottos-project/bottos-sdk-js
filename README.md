@@ -47,10 +47,10 @@ In browers:
 
 Then:
 ```js
-var sdk = new BottosWalletSDK({
+const sdk = new BottosWalletSDK({
     baseUrl: "http://localhost:8689/v1"
 });
-
+const Wallet = sdk.Wallet
 ```
 
 There you go, now you can use it:
@@ -59,6 +59,22 @@ There you go, now you can use it:
 const Keypairs = Wallet.createKeys()
 
 console.log('Keypairs', Keypairs)
+```
+
+Send a transaction:
+```js
+
+const params = {
+  from: 'testaccount1',
+  to: 'testaccount2',
+  value: 100,
+}
+let privateKey = 'b4e0391643ff9be326a6ddfa543df0e0c2e37b7e11ed2f45590c62a5d5f09d9f'
+
+Wallet.sendTransaction(params, privateKey)
+  .then(res => {
+    console.log('sendTransaction res:', res)
+  })
 ```
 
 You can find more examples in the [`example`](https://github.com/bottos-project/bottos-sdk-js/tree/master/example) directory.

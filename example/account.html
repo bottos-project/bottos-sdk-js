@@ -31,6 +31,7 @@
       <p id='privateKey'></p>
     </div>
     
+    <hr>
 
     <h2>Create Keystore</h2>
 
@@ -44,7 +45,7 @@
         <input type="password" class="form-control" id="form-password" placeholder="Password">
       </div>
       <div class="form-group">
-        <label for="form-privateKey">privateKey</label>
+        <label for="form-privateKey">PrivateKey</label>
         <input type="text" class="form-control" id="form-privateKey" placeholder="PrivateKey">
       </div>
     </form>
@@ -55,30 +56,54 @@
       <p>Keystore:</p>
       <p id='Keystore'></p>
     </div>
+
+    <hr>
+
+    <h2>Send Transaction</h2>
+
+    <form>
+      <div class="form-group">
+        <label for="transfer-from">From account</label>
+        <input type="text" class="form-control" id="transfer-from" placeholder="From account">
+      </div>
+      <div class="form-group">
+        <label for="transfer-to">To account</label>
+        <input type="text" class="form-control" id="transfer-to" placeholder="To account">
+      </div>
+      <div class="form-group">
+        <label for="transfer-value">Value</label>
+        <input type="text" class="form-control" id="transfer-value" placeholder="Value">
+      </div>
+      <div class="form-group">
+        <label for="form-privateKey">PrivateKey</label>
+        <input type="text" class="form-control" id="transfer-privateKey" placeholder="PrivateKey">
+      </div>
+    </form>
+    
+    <button id="btn-transfer" class="btn btn-default">Send Transaction</button>
     
   </div>
 
   <script src="../dist/bottos-sdk-js.min.js"></script>
   <script>
-    const sdk = new BottosWalletSDK()
+    // const sdk = new BottosWalletSDK()
+    const sdk = new BottosWalletSDK({
+        baseUrl: "http://wallet.bottos.org:8689/v1"
+      });
     const Wallet = sdk.Wallet
 
     var keystoreObj = null;
 
     function createKeypairs() {
-
       const Keypairs = Wallet.createKeys()
       document.querySelector('#publicKey').innerText = Keypairs.publicKey
       document.querySelector('#privateKey').innerText = Keypairs.privateKey
-
     }
 
     var btn1 = document.querySelector('#btn-createKeys')
     btn1.onclick = createKeypairs
-    
 
     function createKeystore() {
-
       const account = document.querySelector('#account').value
       const password = document.querySelector('#form-password').value
       const privateKey = document.querySelector('#form-privateKey').value
@@ -88,11 +113,24 @@
       })
 
       document.querySelector('#Keystore').innerText = JSON.stringify(keystoreObj)
-
     }
 
     var btn2 = document.querySelector('#btn-createKeystore')
     btn2.onclick = createKeystore
+
+    function transfer() {
+      const from = document.querySelector('#transfer-from').value
+      const to = document.querySelector('#transfer-to').value
+      const value = document.querySelector('#transfer-value').value
+      const privateKey = document.querySelector('#transfer-privateKey').value
+
+      Wallet.sendTransaction({ from, to, value }, privateKey)
+        .then(res => {
+          console.log('sendTransaction res:', res)
+        })
+    }
+
+    document.querySelector('#btn-transfer').onclick = transfer
 
     // let privateKey = Wallet.recover(document.querySelector('#password').value, keystoreObj)
   </script>
