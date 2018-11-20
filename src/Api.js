@@ -61,44 +61,33 @@ function ApiFactory(config) {
   Api.request = simpleFetch
 
   /**
-   * Returns the abi. If callback is undefined, this function will return a promise.
+   * Returns the abi.
    * @function Api.getAbi
    * @param {string} contract - The contract name.
-   * @param {functionCallback} [callback] - The optional callback.
-   * @returns {Promise<Object>|undefined}
+   * @returns {(Promise<(Object|null)>)}
    */
-  Api.getAbi = function (contract, callback) {
-    const cb = callback
+  Api.getAbi = function (contract) {
     const url = '/contract/abi'
-    let promise = simpleFetch(url, { contract }).then(res => res.json())
-
-    if (!cb) {
-      return promise.then(res => {
-        if (!res) {
-          throw new Error('Get abi error.')
-        } else if (res.errcode != 0) {
-          throw res
-        } else if (typeof res.result == 'string') {
-          return JSON.parse(res.result)
-        } else {
-          return res.result
-        }
-      })
-    }
-    promise.then(res => {
-      var err = null, result;
-      if (!res) {
-        err = new Error('Get abi error.')
-      } else if (res.errcode != 0) {
-        err = res
-      } else if (typeof res.result == 'string') {
-        result = JSON.parse(res.result)
-      } else {
-        result = res.result
+    return simpleFetch(url, { contract })
+    .then(res => res.json())
+    .catch(err => {
+      // console.dir(err)
+      if (err.message.startsWith('Unexpected token { in JSON')) {
+        return { "errcode": 0, "msg": "success", "result": null }
       }
-      cb(err, result)
     })
-    .catch(err => cb(err))
+    .then(res => {
+      // console.log('getAbi res', res)
+      if (!res) {
+        throw new Error('Get abi error.')
+      } else if (res.errcode != 0) {
+        throw res
+      } else if (typeof res.result == 'string') {
+        return JSON.parse(res.result)
+      } else {
+        return res.result
+      }
+    })
 
   }
 

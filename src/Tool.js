@@ -4,12 +4,13 @@ const PackBin16 = require('../lib/packParam').PackBin16
 const { BasicPack, BTPack } = require('bottos-js-msgpack')
 
 /**
+ * A template used in send transaction. 
  * @typedef {Object} originFetchTemplate
- * @property {number} [originFetchTemplate.version=1] - Default value is 1.
  * @property {string} originFetchTemplate.sender - Default value is bottos.
  * @property {string} [originFetchTemplate.contract=bottos] - The contract. Default value is bottos.
- * @property {string} originFetchTemplate.method
+ * @property {string} originFetchTemplate.method - Method in Abi, not required when a exteral contract is called.
  * @property {Object} originFetchTemplate.param
+ * @property {number} [originFetchTemplate.version=1] - Default value is 1.
  * @property {number} [originFetchTemplate.sig_alg=1] - Default value is 1.
  */
 
@@ -98,6 +99,7 @@ function ToolFactory(config, Api) {
    * @param {originFetchTemplate} originFetchTemplate
    * @param {Object} blockHeader
    * @param {(string|Buffer)} privateKey
+   * @param {Object} abi
    * @returns {Object}
    */
   const processFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
@@ -117,12 +119,14 @@ function ToolFactory(config, Api) {
    * @param {originFetchTemplate} originFetchTemplate
    * @param {Object} blockHeader
    * @param {(string|Buffer)} privateKey
+   * @param {(Object|null)} abi
    * @returns {Object}
    */
   const processExternalFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
     let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
 
-    var packBuf = BTPack(fetchTemplate.param, abi)
+    // 这里做个判断，如果 abi 是 null，就不用 pack，直接传空数组
+    var packBuf = abi == null ? [] : BTPack(fetchTemplate.param, abi)
     fetchTemplate.param = packBuf
 
     let signature = signMsg(fetchTemplate, privateKey)
@@ -133,6 +137,15 @@ function ToolFactory(config, Api) {
     return fetchTemplate
   }
 
+  /**
+   * @async
+   * @function Tool.getTransactionInfo
+   * @param {string} trx_hash
+   * @returns {Promise<Object>}
+   */
+  Tool.getTransactionInfo = function(trx_hash) {
+    return Api.request('/transaction/get', {trx_hash}).then(res => res.json())
+  }
 
   /**
    * @async
@@ -149,7 +162,7 @@ function ToolFactory(config, Api) {
       return this._Api.getBlockHeader()
         .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey))
     }
-    // 如果不是内置合约
+    // 如果不是内置合约，请求外置合约，外置合约的合约名就是发布合约的用户名
     return Api.getAbi(_originFetchTemplate.contract)
     .then(abi => this._Api.getBlockHeader()
       .then((blockHeader) => processExternalFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)))

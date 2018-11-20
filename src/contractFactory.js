@@ -11,16 +11,16 @@ function contractFactory(Tool) {
   const Contract = {}
 
   /**
-   * Deploy a contract.
+   * Deploy a contract. The name of the contract is account name, and the code is expected a wasm file.
    * @async
    * @function Contract.deployCode
    * @param {Object} param
    * @param {number} [param.vm_type=1] - vm_type, now is 1.
    * @param {number} [param.vm_version=1] - vm_version, now is 1.
-   * @param {Uint8Array|ArrayBuffer} param.contract_code - wasm file buffer.
+   * @param {(Uint8Array|ArrayBuffer)} param.contract_code - wasm file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
-   * @param {string|Buffer} senderInfo.privateKey - sender's privateKey
+   * @param {(string|Buffer)} senderInfo.privateKey - sender's privateKey
    * @returns {Promise<Object>}
    */
   Contract.deployCode = function (param, senderInfo) {
@@ -51,7 +51,7 @@ function contractFactory(Tool) {
    * @async
    * @function Contract.deployABI
    * @param {Object} param
-   * @param {string|Uint8Array|ArrayBuffer} param.contract_abi - ABI content or file buffer.
+   * @param {(string|Uint8Array|ArrayBuffer)} param.contract_abi - ABI content or file buffer.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
    * @param {string|Buffer} senderInfo.privateKey - sender's privateKey
@@ -86,8 +86,8 @@ function contractFactory(Tool) {
   /**
    * @async
    * @function Contract.callContract
-   * @param {Object} originFetchTemplate
-   * @param {string|Buffer} privateKey
+   * @param {originFetchTemplate} originFetchTemplate
+   * @param {(string|Buffer)} privateKey
    * @returns {Promise<Object>}
    */
   Contract.callContract = function (originFetchTemplate, privateKey) {
