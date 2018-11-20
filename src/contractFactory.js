@@ -13,7 +13,7 @@ function contractFactory(Tool) {
   /**
    * Deploy a contract.
    * @async
-   * @function Contract.deployContract
+   * @function Contract.deployCode
    * @param {Object} param
    * @param {number} [param.vm_type=1] - vm_type, now is 1.
    * @param {number} [param.vm_version=1] - vm_version, now is 1.

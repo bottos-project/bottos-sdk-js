@@ -1,11 +1,10 @@
 {
   "name": "bottos-sdk-js",
-  "version": "0.2.2",
-  "main": "dist/bottos-sdk-js.min.js",
-  "module": "src/index.js",
+  "version": "0.2.3",
+  "main": "index.js",
   "typings": "./index.d.ts",
   "files": [
-    "dist",
+    "index.js",
     "lib",
     "src",
     "index.d.ts",

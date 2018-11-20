@@ -17,20 +17,16 @@ The SDK supports below features:
 
 ### Node.js
 
-```bash
-npm install bottos-sdk-js
+#### If you use npm
+```shell
+npm install bottos-sdk-js --save
 ```
 
-### Yarn
+#### or yarn
 
-```bash
+```shell
 yarn add bottos-sdk-js
 ```
-
-### file
-
-You can find the bottos-sdk-js.min.js file on [release page](https://github.com/bottos-project/bottos-sdk-js/releases)
-
 
 ## Usage
 
@@ -42,8 +38,10 @@ var BottosWalletSDK = require('bottos-sdk-js');
 In browers:
 ```html
 <script src="path/to/bottos-sdk-js.min.js"></script>
-
 ```
+
+### file
+You can find the bottos-sdk-js.min.js file on [release page](https://github.com/bottos-project/bottos-sdk-js/releases)
 
 Then:
 ```js

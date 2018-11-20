@@ -1,7 +1,7 @@
 const { addBlockHeader } = require('../lib/getFetchTemplate')
 const packParamToParamArr = require('../lib/packParam')
 const PackBin16 = require('../lib/packParam').PackBin16
-const { BasicPack } = require('bottos-js-msgpack')
+const { BasicPack, BTPack } = require('bottos-js-msgpack')
 
 /**
  * @typedef {Object} originFetchTemplate
@@ -112,6 +112,27 @@ function ToolFactory(config, Api) {
     return fetchTemplate
   }
 
+  /**
+   * @private
+   * @param {originFetchTemplate} originFetchTemplate
+   * @param {Object} blockHeader
+   * @param {(string|Buffer)} privateKey
+   * @returns {Object}
+   */
+  const processExternalFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
+    let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
+
+    var packBuf = BTPack(fetchTemplate.param, abi)
+    fetchTemplate.param = packBuf
+
+    let signature = signMsg(fetchTemplate, privateKey)
+    fetchTemplate.param = BTCryptTool.buf2hex(paramArr)
+    // console.log('fetchTemplate.param', fetchTemplate.param)
+    fetchTemplate.signature = signature
+    // console.log('fetchTemplate', fetchTemplate)
+    return fetchTemplate
+  }
+
 
   /**
    * @async
@@ -131,7 +152,7 @@ function ToolFactory(config, Api) {
     // 如果不是内置合约
     return Api.getAbi(_originFetchTemplate.contract)
     .then(abi => this._Api.getBlockHeader()
-      .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)))
+      .then((blockHeader) => processExternalFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)))
   }
 
   return Tool
