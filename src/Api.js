@@ -1,5 +1,6 @@
 
 const querystring = require('querystring')
+const fetch = require('cross-fetch');
 
 /**
  * This callback is displayed as a global member.
