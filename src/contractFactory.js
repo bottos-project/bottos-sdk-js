@@ -52,6 +52,7 @@ function contractFactory(Tool) {
    * @function Contract.deployABI
    * @param {Object} param
    * @param {(string|Uint8Array|ArrayBuffer)} param.contract_abi - ABI content or file buffer.
+   * @param {string} [param.filetype=js] - ABI file type, js or wasm. Default is js.
    * @param {Object} senderInfo - The sender
    * @param {string} senderInfo.account - sender's account
    * @param {string|Buffer} senderInfo.privateKey - sender's privateKey
@@ -63,16 +64,22 @@ function contractFactory(Tool) {
       code = BasicPack.PackStr16(code).slice(3)
     } else if (code instanceof ArrayBuffer) {
       code = new Uint8Array(code)
+    } else if (!(code instanceof Uint8Array)) {
+      console.warn('Type error. param contract_abi: ' + param.contract_abi + ' could not be transcode to Uint8Array')
     }
 
-    console.assert(code instanceof Uint8Array, 'Type error. param contract_abi: ' + param.contract_abi + ' could not be transcode to Uint8Array')
+    let filetype = param.filetype || 'js'
+    if (filetype != 'js' && filetype != 'wasm') {
+      console.error('Params error, the value of filetype must be "js" or "wasm".')
+    }
 
     let params = {
       sender: senderInfo.account,
       method: "deployabi",
       param: {
         contract: senderInfo.account,
-        contract_abi: code
+        contract_abi: code,
+        filetype
       }
     }
 

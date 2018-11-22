@@ -69,7 +69,8 @@ const Abi = {
       "base": "",
       "fields": {
         "contract": "string",
-        "contract_abi": "bytes"
+        "contract_abi": "bytes",
+        "filetype": "string"
       }
     },
     {
