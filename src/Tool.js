@@ -124,13 +124,11 @@ function ToolFactory(config, Api) {
    */
   const processExternalFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
     let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
-
     // 这里做个判断，如果 abi 是 null，就不用 pack，直接传空数组
     var packBuf = abi == null ? [] : BTPack(fetchTemplate.param, abi)
     fetchTemplate.param = packBuf
-
     let signature = signMsg(fetchTemplate, privateKey)
-    fetchTemplate.param = BTCryptTool.buf2hex(paramArr)
+    fetchTemplate.param = BTCryptTool.buf2hex(packBuf)
     // console.log('fetchTemplate.param', fetchTemplate.param)
     fetchTemplate.signature = signature
     // console.log('fetchTemplate', fetchTemplate)
