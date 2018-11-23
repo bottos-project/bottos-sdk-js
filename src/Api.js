@@ -83,8 +83,8 @@ function ApiFactory(config) {
         throw new Error('Get abi error.')
       } else if (res.errcode != 0) {
         throw res
-      } else if (typeof res.result == 'string') {
-        return JSON.parse(res.result)
+      } else if (typeof res.msg == 'string') {
+        return JSON.parse(res.msg)
       } else {
         return res.result
       }
