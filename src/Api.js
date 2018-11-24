@@ -14,7 +14,7 @@ const fetch = require('cross-fetch');
  */
 const Api = {
   /** Documented as Api.chain_id */
-  chain_id: "4b97b92d2c78bcffe95ebd3067565c73a2931b39d5eb7234b11816dcec54761a"
+  chain_id: "7e16479f12fafb52696b31c31a8fdbafc527a9c8d5b4a8cfb222d5304ad92ed0"
 }
 
 /**
