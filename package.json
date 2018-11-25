@@ -1,12 +1,13 @@
 {
   "name": "bottos-sdk-js",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "main": "index.js",
   "typings": "./index.d.ts",
   "files": [
     "index.js",
     "lib",
     "src",
+    "umd",
     "index.d.ts",
     "Abi.js"
   ],
@@ -31,6 +32,7 @@
   },
   "author": "VinciXie",
   "license": "GPL-3.0",
+  "unpkg": "./umd/bottos-sdk-js.min.js",
   "devDependencies": {
     "jest": "^23.6.0",
     "webpack": "^4.26.0",

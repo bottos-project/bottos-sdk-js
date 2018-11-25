@@ -30,20 +30,22 @@ yarn add bottos-sdk-js
 
 ## Usage
 
-In node:
+#### In node:
 ```js
 var BottosWalletSDK = require('bottos-sdk-js');
 ```
 
-In browers:
+#### In browers:
 ```html
 <script src="path/to/bottos-sdk-js.min.js"></script>
+<!-- or a CDN  -->
+<script src="unpkg.com/bottos-sdk-js"></script>
 ```
 
-### file
+#### file
 You can find the bottos-sdk-js.min.js file on [release page](https://github.com/bottos-project/bottos-sdk-js/releases)
 
-Then:
+### Then:
 ```js
 const sdk = new BottosWalletSDK({
     baseUrl: "http://localhost:8689/v1"
