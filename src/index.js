@@ -54,8 +54,16 @@ function BottosWalletSDK(config) {
  * @function BottosWalletSDK#setBaseUrl
  * @param {string} baseUrl - The baseUrl used in request.
  */
-BottosWalletSDK.prototype.setBaseUrl =function(baseUrl) {
+BottosWalletSDK.prototype.setBaseUrl = function(baseUrl) {
   this.config.baseUrl = baseUrl
+}
+
+/**
+ * Update the chain_id manual.
+ * @function BottosWalletSDK#updateChainId
+ */
+BottosWalletSDK.prototype.updateChainId = function() {
+  this.Api.getBlockHeader()
 }
 
 module.exports = BottosWalletSDK
