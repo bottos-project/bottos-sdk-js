@@ -616,9 +616,9 @@ bottos-crypto-js@^1.0.14:
     secp256k1 "^3.5.0"
     uuid "^3.2.1"
 
-bottos-js-msgpack@^1.0.2:
-  version "1.0.2"
-  resolved "http://registry.npm.taobao.org/bottos-js-msgpack/download/bottos-js-msgpack-1.0.2.tgz#a7410450487b56e18f7f02eef93c92c6597bcc5b"
+bottos-js-msgpack@^1.0.5:
+  version "1.0.5"
+  resolved "http://registry.npm.taobao.org/bottos-js-msgpack/download/bottos-js-msgpack-1.0.5.tgz#fa096f85b60193a844296a40bbc62a177e1d1f16"
   dependencies:
     bignumber.js "^7.2.1"
     long "^4.0.0"

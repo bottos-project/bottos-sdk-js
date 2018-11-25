@@ -126,7 +126,17 @@ function ToolFactory(config, Api) {
     let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
     let method = fetchTemplate.method
     // 这里做个判断，如果 abi 是 null，就不用 pack，直接传空数组
-    var packBuf = abi == null ? [] : BTPack(fetchTemplate.param, abi[method])
+    // var packBuf = abi == null ? [] : BTPack(fetchTemplate.param, abi[method])
+    var packBuf = []
+
+    if (abi != null) {
+      if (abi[method] == undefined) {
+        packBuf = packParamToParamArr(fetchTemplate, abi)
+      } else {
+        packBuf = BTPack(fetchTemplate.param, abi[method])
+      }
+    }
+
     fetchTemplate.param = packBuf
     let signature = signMsg(fetchTemplate, privateKey)
     fetchTemplate.param = BTCryptTool.buf2hex(packBuf)
