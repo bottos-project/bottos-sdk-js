@@ -1,5 +1,6 @@
 const { getTransferFetchTemplate } = require('./lib/getFetchTemplate');
 const BottosWalletSDK = require('./src/index');
+const { coefficient } = require('./lib/const')
 
 
 test('check too long transfer params memo', () => {
@@ -41,8 +42,13 @@ test('node fetch trx info', done => {
 
   Tool.getTransactionInfo('0e646769af440642e9490944ff63a77bad1dcf1e72716584829d48524e7c343a')
     .then(res => {
-      // console.log('res', res)
-      expect(res.errcode).toBe(0)
+      console.log('res.errcode', res.errcode)
+      expect([0, 10201].includes(res.errcode)).toBeTruthy()
       done()
     })
+})
+
+
+test('check the constants', () => {
+  expect(coefficient).toBe(1e8)
 })

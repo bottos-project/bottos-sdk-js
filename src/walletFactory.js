@@ -1,4 +1,5 @@
 const { getRegisterFetchTemplate, getTransferFetchTemplate } = require('../lib/getFetchTemplate.js')
+const { coefficient } = require('../lib/const')
 
 const accountReg = /^[a-z][a-z0-9]{2,20}$/
 
@@ -157,11 +158,12 @@ function walletFactory(config, Tool) {
   Wallet.stake = function (params, senderInfo) {
     let { amount, target } = params
     target = target ? target : 'vote'
+    let value = amount * coefficient
     const { account, privateKey } = senderInfo
     let originFetchTemplate = {
       method: "stake",
       sender: account,
-      param: { amount, target },
+      param: { amount: Number.parseInt(value), target },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
@@ -182,11 +184,12 @@ function walletFactory(config, Tool) {
   Wallet.unstake = function (params, senderInfo) {
     let { amount, source } = params
     source = source ? source : 'vote'
+    let value = amount * coefficient
     const { account, privateKey } = senderInfo
     let originFetchTemplate = {
       method: "unstake",
       sender: account,
-      param: { amount, source },
+      param: { amount: Number.parseInt(value), source },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
     .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
@@ -204,10 +207,11 @@ function walletFactory(config, Tool) {
    */
   Wallet.claim = function (amount, senderInfo) {
     const { account, privateKey } = senderInfo
+    let value = amount * coefficient
     let originFetchTemplate = {
       method: "claim",
       sender: account,
-      param: { amount },
+      param: { amount: Number.parseInt(value) },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
