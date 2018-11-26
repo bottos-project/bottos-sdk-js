@@ -103,14 +103,16 @@ const Abi = {
       "name": "Stake",
       "base": "",
       "fields": {
-        "amount": "uint256"
+        "amount": "uint256",
+        "target": "string"
       }
     },
     {
       "name": "Unstake",
       "base": "",
       "fields": {
-        "amount": "uint256"
+        "amount": "uint256",
+        "source": "string"
       }
     },
     {

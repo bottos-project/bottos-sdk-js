@@ -10,6 +10,12 @@ interface OriginFetchTemplate {
   sig_alg: 1;
 }
 
+interface PostTxRes {
+  errcode: number;
+  msg: string;
+  result: any;
+}
+
 export interface KeystoreStructure {
   account: string;
   crypto: object;
@@ -27,19 +33,19 @@ export interface SenderInfo {
   privateKey: Buffer | string;
 }
 
-type StakeLike = (amount: number, senderInfo: SenderInfo) => Promise<any>;
+type StakeLike = (amount: number, senderInfo: SenderInfo) => Promise<PostTxRes>;
 
-type VoteLike = (delegate: string, senderInfo: SenderInfo) => Promise<any>;
+type VoteLike = (delegate: string, senderInfo: SenderInfo) => Promise<PostTxRes>;
 
 interface Api {
   chain_id: string;
 
   request(url: string, params: any, method?: string): Promise<Response>;
 
-  getAbi(contract: string): Promise<Response>;
+  getAbi(contract: string): Promise<any>;
   getAbi(contract: string, callback: FunctionCallback): void;
 
-  getBlockHeader(): Promise<Response>;
+  getBlockHeader(): Promise<any>;
   getBlockHeader(callback: FunctionCallback): void;
 
 }
@@ -49,6 +55,8 @@ interface Tool {
   _Api: Api;
 
   buf2hex(b: Buffer | string): string;
+
+  getTransactionInfo(trx_hash: string): Promise<PostTxRes>;
 
   getRequestParams(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<any>;
 
@@ -78,11 +86,19 @@ interface Wallet {
     to: string;
     value: string | number;
     memo?: string;
-  }, privateKey: Buffer | string): Promise<any>;
+  }, privateKey: Buffer | string): Promise<PostTxRes>;
 
-  stake: StakeLike;
-  unstake: StakeLike;
-  claim: StakeLike;
+  stake(params: {
+    amount: number;
+    target: string;
+  }, senderInfo: SenderInfo): Promise<PostTxRes>;
+
+  unstake(params: {
+    amount: number;
+    source: string;
+  }, senderInfo: SenderInfo): Promise<PostTxRes>;
+
+  claim(amount: number, senderInfo: SenderInfo): Promise<PostTxRes>;
 
   vote: VoteLike;
   cancelVote: VoteLike;
@@ -94,13 +110,14 @@ interface Contract {
     vm_type?: number;
     vm_version?: number;
     contract_code: Uint8Array | ArrayBuffer;
-  }, senderInfo: SenderInfo): Promise<any>;
+  }, senderInfo: SenderInfo): Promise<PostTxRes>;
 
   deployABI(param: {
-    contract_abi: string | Uint8Array | ArrayBuffer
-  }, senderInfo: SenderInfo): Promise<any>;
+    contract_abi: string | Uint8Array | ArrayBuffer;
+    filetype?: string;
+  }, senderInfo: SenderInfo): Promise<PostTxRes>;
 
-  callContract(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<any>;
+  callContract(originFetchTemplate: OriginFetchTemplate, privateKey: Buffer | string): Promise<PostTxRes>;
 }
 
 export interface Config {

@@ -146,18 +146,22 @@ function walletFactory(config, Tool) {
   /**
    * @async
    * @function Wallet.stake
-   * @param {number} amount
+   * @param {Object} params
+   * @param {number} params.amount
+   * @param {string} [params.target=vote] - The target you want to stake for, can set to `vote`, `space` or `time`.
    * @param {Object} senderInfo
    * @param {string} senderInfo.account
    * @param {(string|Uint8Array)} senderInfo.privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.stake = function (amount, senderInfo) {
+  Wallet.stake = function (params, senderInfo) {
+    let { amount, target } = params
+    target = target ? target : 'vote'
     const { account, privateKey } = senderInfo
     let originFetchTemplate = {
       method: "stake",
       sender: account,
-      param: { amount },
+      param: { amount, target },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
@@ -167,18 +171,22 @@ function walletFactory(config, Tool) {
   /**
    * @async
    * @function Wallet.unstake
-   * @param {number} amount
+   * @param {Object} params
+   * @param {number} params.amount
+   * @param {string} [params.source=vote]
    * @param {Object} senderInfo
    * @param {string} senderInfo.account
    * @param {(string|Uint8Array)} senderInfo.privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.unstake = function (amount, senderInfo) {
+  Wallet.unstake = function (params, senderInfo) {
+    let { amount, source } = params
+    source = source ? source : 'vote'
     const { account, privateKey } = senderInfo
     let originFetchTemplate = {
       method: "unstake",
       sender: account,
-      param: { amount },
+      param: { amount, source },
     }
     return Tool.getRequestParams(originFetchTemplate, privateKey)
     .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
