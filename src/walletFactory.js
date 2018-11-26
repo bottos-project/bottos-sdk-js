@@ -1,6 +1,12 @@
 const { getRegisterFetchTemplate, getTransferFetchTemplate } = require('../lib/getFetchTemplate.js')
 const { coefficient } = require('../lib/const')
 
+
+/**
+ * A number, or a string containing a number.
+ * @typedef {(number|string)} NumberLike
+ */
+
 const accountReg = /^[a-z][a-z0-9]{2,20}$/
 
 function walletFactory(config, Tool) {
@@ -148,7 +154,7 @@ function walletFactory(config, Tool) {
    * @async
    * @function Wallet.stake
    * @param {Object} params
-   * @param {number} params.amount
+   * @param {NumberLike} params.amount
    * @param {string} [params.target=vote] - The target you want to stake for, can set to `vote`, `space` or `time`.
    * @param {Object} senderInfo
    * @param {string} senderInfo.account
@@ -174,7 +180,7 @@ function walletFactory(config, Tool) {
    * @async
    * @function Wallet.unstake
    * @param {Object} params
-   * @param {number} params.amount
+   * @param {NumberLike} params.amount
    * @param {string} [params.source=vote]
    * @param {Object} senderInfo
    * @param {string} senderInfo.account
@@ -199,7 +205,7 @@ function walletFactory(config, Tool) {
   /**
    * @async
    * @function Wallet.claim
-   * @param {number} amount
+   * @param {NumberLike} amount
    * @param {Object} senderInfo
    * @param {string} senderInfo.account
    * @param {(string|Uint8Array)} senderInfo.privateKey
