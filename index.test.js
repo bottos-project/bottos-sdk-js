@@ -1,5 +1,5 @@
 const { getTransferFetchTemplate } = require('./lib/getFetchTemplate');
-const BottosWalletSDK = require('./src/index');
+const BottosWalletSDK = require('./index');
 const { coefficient } = require('./lib/const')
 
 

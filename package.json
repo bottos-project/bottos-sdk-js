@@ -2,6 +2,7 @@
   "name": "bottos-sdk-js",
   "version": "0.3.1",
   "main": "index.js",
+  "browser": "browser.js",
   "typings": "./index.d.ts",
   "files": [
     "index.js",
@@ -18,7 +19,7 @@
   "dependencies": {
     "bottos-crypto-js": "^1.0.14",
     "bottos-js-msgpack": "^1.0.5",
-    "cross-fetch": "^2.2.3",
+    "node-fetch": "^2.3.0",
     "querystring": "^0.2.0"
   },
   "keywords": [

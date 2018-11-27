@@ -1,6 +1,5 @@
 
 const querystring = require('querystring')
-const fetch = require('cross-fetch');
 
 /**
  * This callback is displayed as a global member.
@@ -10,26 +9,21 @@ const fetch = require('cross-fetch');
  */
 
 /**
- * @namespace Api
- */
-const Api = {
-  /** Documented as Api.chain_id */
-  chain_id: "7e16479f12fafb52696b31c31a8fdbafc527a9c8d5b4a8cfb222d5304ad92ed0"
-}
-
-/**
  * @ignore
  * @param {Object} config
  * @param {string} config.baseUrl
  * @param {number} config.version
+ * @param {Function} [config.fetch]
  */
 function ApiFactory(config) {
+  var _fetch = config.fetch || window.fetch // In browser and React-Native
 
   /**
    * @function Api.request
    * @param {string} url
    * @param {Object} params
    * @param {string} [method=POST]
+   * @returns {Promise<Response>}
    */
   function simpleFetch(url, params, method = 'POST') {
 
@@ -43,7 +37,7 @@ function ApiFactory(config) {
         method: 'GET',
         mode: 'cors',
       }
-      return fetch(config.baseUrl + url + paramStr, CORSOptions)
+      return _fetch(config.baseUrl + url + paramStr, CORSOptions)
     }
 
     let __options = {
@@ -55,19 +49,17 @@ function ApiFactory(config) {
       body: JSON.stringify(params)
     }
 
-    return fetch(config.baseUrl + url, __options)
+    return _fetch(config.baseUrl + url, __options)
   }
 
-
-  Api.request = simpleFetch
 
   /**
    * Returns the abi.
    * @function Api.getAbi
    * @param {string} contract - The contract name.
-   * @returns {(Promise<(Object|null)>)}
+   * @returns {Promise<(Object|null)>}
    */
-  Api.getAbi = function (contract) {
+  function getAbi(contract) {
     const url = '/contract/abi'
     return simpleFetch(url, { contract })
     .then(res => res.json())
@@ -83,15 +75,19 @@ function ApiFactory(config) {
         throw new Error('Get abi error.')
       } else if (res.errcode != 0) {
         throw res
-      } else if (typeof res.msg == 'string') {
-        return JSON.parse(res.msg)
       } else {
-        return res.result
+        // 成功，现在有两个情况
+        // 1. 如果是 bottos，直接返回 result
+        if (contract == 'bottos') { return res.result }
+        // 2. 如果不是 bottos，就是请求的外置合约的 ABI
+        try {
+          return JSON.parse(res.msg)
+        } catch (error) {
+          return res.result
+        }
       }
     })
-
   }
-
 
   /**
    * Documented as Api.getBlockHeader.
@@ -99,7 +95,7 @@ function ApiFactory(config) {
    * @param {functionCallback} [callback]
    * @returns {Promise<Object>|undefined} If callback is undefined, a promise will be returned.
    */
-  Api.getBlockHeader = function (callback) {
+  function getBlockHeader(callback) {
     const cb = callback
     let promise = simpleFetch('/block/height', null, 'GET')
       .then(res => res.json())
@@ -144,8 +140,18 @@ function ApiFactory(config) {
     .catch(err => cb(err))
   }
 
+  /**
+   * @namespace Api
+   */
+  const Api = {
+    /** Documented as Api.chain_id */
+    chain_id: "7e16479f12fafb52696b31c31a8fdbafc527a9c8d5b4a8cfb222d5304ad92ed0",
+    request: simpleFetch,
+    getAbi,
+    getBlockHeader
+  }
+
   return Api
 }
-
 
 module.exports = ApiFactory
