@@ -1,11 +1,12 @@
 {
   "name": "bottos-sdk-js",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "index.js",
   "browser": "browser.js",
   "typings": "./index.d.ts",
   "files": [
     "index.js",
+    "browser.js",
     "lib",
     "src",
     "umd",
