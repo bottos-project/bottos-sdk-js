@@ -8,6 +8,17 @@ const querystring = require('querystring')
  * @param {*} result - The success result.
  */
 
+// ref: https://github.com/tc39/proposal-global
+var getGlobal = function () {
+  // the only reliable means to get the global object is
+  // `Function('return this')()`
+  // However, this causes CSP violations in Chrome apps.
+  if (typeof self !== 'undefined') { return self; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  throw new Error('unable to locate global object');
+}
+
 /**
  * @ignore
  * @param {Object} config
@@ -16,7 +27,9 @@ const querystring = require('querystring')
  * @param {Function} [config.fetch]
  */
 function ApiFactory(config) {
-  var _fetch = config.fetch || window.fetch // In browser and React-Native
+  let global = getGlobal();
+
+  var _fetch = config.fetch || global.fetch // In browser and React-Native
 
   /**
    * @function Api.request
