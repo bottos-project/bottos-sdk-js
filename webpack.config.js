@@ -1,7 +1,7 @@
 const path = require('path')
 
 const config = {
-  entry: './index.js',
+  entry: './browser.js',
 
   output: {
     filename: 'bottos-sdk-js.min.js',
