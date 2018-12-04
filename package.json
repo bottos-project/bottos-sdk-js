@@ -37,7 +37,7 @@
   "unpkg": "./umd/bottos-sdk-js.min.js",
   "devDependencies": {
     "jest": "^23.6.0",
-    "webpack": "^4.26.0",
+    "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2"
   }
 }
