@@ -127,6 +127,7 @@ function ApiFactory(config) {
           __blockHeader.lifetime = data.head_block_time + 300
           // set chain_id
           this.chain_id = data.chain_id
+          config.version = data.head_block_version
           return __blockHeader
         }
       })
@@ -146,6 +147,7 @@ function ApiFactory(config) {
         __blockHeader.lifetime = data.head_block_time + 300
         // set chain_id
         this.chain_id = data.chain_id
+        config.version = data.head_block_version
         result = __blockHeader
       }
       cb(err, result)

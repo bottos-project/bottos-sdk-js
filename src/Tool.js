@@ -53,15 +53,6 @@ function ToolFactory(config, Api) {
   const BTCryptTool = config.crypto
   const keystore = BTCryptTool.keystore
 
-  let _defaultParams = {
-    version: config.version || 1,
-    sender: "bottos",
-    contract: "bottos",
-    method: "",
-    param: {},
-    sig_alg: 1
-  }
-
   /**
    * @namespace Tool
    */
@@ -164,21 +155,35 @@ function ToolFactory(config, Api) {
    * @returns {Promise<Object>}
    */
   Tool.getRequestParams = function (originFetchTemplate, privateKey) {
+
+    let _defaultParams = {
+      version: config.version || 1,
+      sender: "bottos",
+      contract: "bottos",
+      method: "",
+      param: {},
+      sig_alg: 1
+    }
+
     let _originFetchTemplate = Object.assign({}, _defaultParams, originFetchTemplate)
 
     // 如果是内置合约
     if (_originFetchTemplate.contract == "bottos") {
       return this._Api.getBlockHeader()
-        .then((blockHeader) => processFetchTemplate(_originFetchTemplate, blockHeader, privateKey))
+        .then((blockHeader) => {
+          _originFetchTemplate.version = config.version
+          return processFetchTemplate(_originFetchTemplate, blockHeader, privateKey)
+        })
     }
     // 如果不是内置合约，请求外置合约，外置合约的合约名就是发布合约的用户名
     return Api.getAbi(_originFetchTemplate.contract)
     .then(abi => this._Api.getBlockHeader()
-      .then((blockHeader) => processExternalFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)))
+      .then((blockHeader) => {
+        _originFetchTemplate.version = config.version
+        return processExternalFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)
+      }))
   }
-
   return Tool
-
 }
 
 
