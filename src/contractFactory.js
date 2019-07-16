@@ -25,7 +25,7 @@ function contractFactory(Tool) {
    * @function Contract.deployCode
    * @param {Object} param
    * @param {number} [param.vm_type=1] - vm_type, now is 1.
-   * @param {number} [param.vm_version=1] - vm_version, now is 1.
+   * @param {number} [param.vm_version=0] - vm_version, now is 0.
    * @param {(Uint8Array|ArrayBuffer)} param.contract_code - wasm file buffer.
    * @param {string} param.contract_name - Contract name. Begins with lowercase, 3 ~ 10 
    * @param {Object} senderInfo - The sender
@@ -49,7 +49,7 @@ function contractFactory(Tool) {
       param: {
         contract: contract_name + '@' + senderInfo.account,
         vm_type: param.vm_type != undefined ? param.vm_type : 1,
-        vm_version: param.vm_version != undefined ? param.vm_version : 1,
+        vm_version: param.vm_version != undefined ? param.vm_version : 0,
         contract_code: code
       }
     }

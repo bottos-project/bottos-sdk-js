@@ -12,11 +12,34 @@ const accountReg = /^[a-z][a-z0-9]{2,20}$/
 function walletFactory(config, Tool) {
   const BTCryptTool = config.crypto
 
+  // get keystore object
   const keystore = BTCryptTool.keystore
   keystore.constants.scrypt.n = 262144
 
+  // get mnemonic object
+  const mnemonic = BTCryptTool.mnemonic
+
   /**
-   * @function Wallet.createAccountByIntro
+   * Create key return private key and public key
+   * @function createKeys
+   * @returns {Object} keys
+   */
+  const createKeys = function () {
+    let { privateKey, publicKey } = keystore.createKeys()
+    return {
+      privateKey: BTCryptTool.buf2hex(privateKey),
+      publicKey: BTCryptTool.buf2hex(publicKey)
+    }
+  }
+
+  /**
+   * @namespace Wallet
+   */
+  const Wallet = {}
+  Wallet.createKeys = createKeys
+
+  /**
+   * @function Wallet.createKeystore
    * @param {Object} params - the params required for create keystore
    * @param {string} params.account - account
    * @param {string} params.password - password
@@ -32,27 +55,76 @@ function walletFactory(config, Tool) {
     return keystore.create({ account, password, privateKey })
   }
 
+  Wallet.createKeystore = createKeystore
+  Wallet.createAccountByIntro = createKeystore
 
   /**
-   * Create public and private key pair
-   * @function Wallet.createKeys
-   * @returns {Object} keys
+   * recover keystore return private key and public key
+   * @function recoverKeystore
+   * @param {String} password
+   * @param {Object} keystoreStruct
+   * @returns {Object}
    */
-  const createKeys = function () {
-    let { privateKey, publicKey } = keystore.createKeys()
-    // console.log('privateKey, publicKey', {privateKey, publicKey})
-    return {
-      privateKey: BTCryptTool.buf2hex(privateKey),
-      publicKey: BTCryptTool.buf2hex(publicKey)
-    }
+  const recoverKeystore = function (password, keystoreStruct) {
+
+    let privateKeyBuffer = keystore.recover(password, keystoreStruct)
+
+    // get private key
+    let privateKey = BTCryptTool.buf2hex(privateKeyBuffer)
+
+    // get public key
+    let publicKey = BTCryptTool.buf2hex(BTCryptTool.privateKey2pubKey(privateKeyBuffer))
+
+    return {privateKey, publicKey}
   }
 
-  /**
-   * @namespace Wallet
-   */
-  const Wallet = {}
+  Wallet.recoverKeystore = recoverKeystore
 
-  Wallet.createKeys = createKeys
+
+  /**
+   * Create mnemonic return mnemonic and private key and public key
+   * @function createMnemonic
+   * @param {function} cb
+   */
+  const createMnemonic = function (cb) {
+
+    mnemonic.create((info) => {
+      // get private key
+      let privateKey = BTCryptTool.buf2hex(info.privateKey)
+
+      // get public key
+      let publicKey = BTCryptTool.buf2hex(info.publicKey)
+
+      // action call back
+      cb({mnemonic: info.mnemonic, privateKey, publicKey})
+    })
+  }
+
+  Wallet.createMnemonic = createMnemonic
+
+
+  /**
+   * recover mnemonic return mnemonic and private key and public key
+   * @function recoverMnemonic
+   * @param {String} text
+   * @param {Function} cb
+   * @returns {Object}
+   */
+  const recoverMnemonic = function (text, cb) {
+    let data = mnemonic.recover(text, (info) => {
+      // get private key
+      let privateKey = BTCryptTool.buf2hex(info.privateKey)
+
+      // get public key
+      let publicKey = BTCryptTool.buf2hex(info.publicKey)
+
+      // action call back
+      cb({privateKey, publicKey})
+    })
+  }
+
+  Wallet.recoverMnemonic = recoverMnemonic
+
 
   /**
    * register account on chain
@@ -91,9 +163,6 @@ function walletFactory(config, Tool) {
       // })
 
   }
-
-
-  Wallet.createAccountByIntro = createKeystore
 
   // account: "adfa",
   // crypto: { cipher: "aes-128-ctr", ciphertext: "54f831f74056a683f758c27df56cf460671fae59549894aa4fb4a9935d0eccd6", cipherparams: { … }, mac: "0300f99245dea92dfe22dcc083ebe171f1c172871b4686a03b03e272c0139253", kdf: "scrypt", … },
@@ -267,6 +336,9 @@ function walletFactory(config, Tool) {
     return votedelegate(delegate, senderInfo, 0)
   }
 
+  Wallet.privateKey2pubKey = function(privateKey) {
+    return BTCryptTool.buf2hex(BTCryptTool.privateKey2pubKey(Buffer.from(privateKey, 'hex')))
+  }
 
   return Wallet
 }
