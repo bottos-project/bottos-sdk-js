@@ -7,14 +7,14 @@ const { coefficient } = require('../lib/const')
  * @typedef {(number|string)} NumberLike
  */
 
-const accountReg = /^[a-z][a-z0-9]{2,20}$/
+const accountReg = /^[a-z][a-z0-9\.\-]{9,20}$/
 
 function walletFactory(config, Tool) {
   const BTCryptTool = config.crypto
 
   // get keystore object
   const keystore = BTCryptTool.keystore
-  keystore.constants.scrypt.n = 262144
+  keystore.constants.scrypt.n = 1024
 
   // get mnemonic object
   const mnemonic = BTCryptTool.mnemonic
@@ -84,20 +84,23 @@ function walletFactory(config, Tool) {
   /**
    * Create mnemonic return mnemonic and private key and public key
    * @function createMnemonic
-   * @param {function} cb
+   * @returns {Promise}
    */
-  const createMnemonic = function (cb) {
+  const createMnemonic = function () {
+      return mnemonic.create().then(info=>{
+        // get private key
+        let privateKey = BTCryptTool.buf2hex(info.privateKey)
 
-    mnemonic.create((info) => {
-      // get private key
-      let privateKey = BTCryptTool.buf2hex(info.privateKey)
+        // get public key
+        let publicKey = BTCryptTool.buf2hex(info.publicKey)
 
-      // get public key
-      let publicKey = BTCryptTool.buf2hex(info.publicKey)
-
-      // action call back
-      cb({mnemonic: info.mnemonic, privateKey, publicKey})
-    })
+        // promise params
+        return {
+          mnemonic: info.mnemonic,
+          privateKey,
+          publicKey
+        }
+      })
   }
 
   Wallet.createMnemonic = createMnemonic
@@ -107,19 +110,22 @@ function walletFactory(config, Tool) {
    * recover mnemonic return mnemonic and private key and public key
    * @function recoverMnemonic
    * @param {String} text
-   * @param {Function} cb
-   * @returns {Object}
+   * @returns {Promise}
    */
-  const recoverMnemonic = function (text, cb) {
-    let data = mnemonic.recover(text, (info) => {
+  const recoverMnemonic = function (text) {
+
+    return mnemonic.recover(text).then(info=>{
       // get private key
       let privateKey = BTCryptTool.buf2hex(info.privateKey)
 
       // get public key
       let publicKey = BTCryptTool.buf2hex(info.publicKey)
 
-      // action call back
-      cb({privateKey, publicKey})
+      // promise params
+      return {
+        privateKey,
+        publicKey
+      }
     })
   }
 
@@ -139,7 +145,6 @@ function walletFactory(config, Tool) {
    * @returns {Promise<Object>}
    */
   Wallet.createAccountWithIntro = function (params, referrerInfo) {
-    // 1. pack params
     let __params = {
       account: params.account,
       publicKey: params.publicKey,
@@ -152,22 +157,7 @@ function walletFactory(config, Tool) {
     return Tool.getRequestParams(originFetchTemplate, privateKey)
       .then(fetchTemplate => Tool._Api.request('/transaction/send', fetchTemplate))
       .then(res => res.json())
-      // .then(res => {
-      //   if (!res) {
-      //     throw new Error('createAccountWithIntro error')
-      //   } else if (res.errcode != 0) {
-      //     throw new Error(res.msg)
-      //   } else {
-      //     return res
-      //   }
-      // })
-
   }
-
-  // account: "adfa",
-  // crypto: { cipher: "aes-128-ctr", ciphertext: "54f831f74056a683f758c27df56cf460671fae59549894aa4fb4a9935d0eccd6", cipherparams: { … }, mac: "0300f99245dea92dfe22dcc083ebe171f1c172871b4686a03b03e272c0139253", kdf: "scrypt", … },
-  // id: "12f16bd2-3d1e-4dfd-98d9-b1124c9d084b",
-  // version: 3,
 
   /**
    * @function Wallet.recover
@@ -178,12 +168,28 @@ function walletFactory(config, Tool) {
   Wallet.recover = keystore.recover.bind(keystore)
 
   /**
-   * private method
+   * @async
+   * @function signMsg
+   * @param {sha256} sha
+   * @param {string} privateKey
+   * @returns {string}
+   * @dest 
    */
-  // Wallet.signTransaction = function() {
-  //
-  // }
+  Wallet.signMsg = function (sha, privateKey) {
+    let pri = keystore.str2buf(privateKey)
+    let sign = BTCryptTool.sign(sha, pri)
+    let signature = sign.toString('hex')
 
+    return signature
+  }
+
+  /**
+   * @param {Object} fetchTemplate
+   * @returns {string} msgSha256
+   */
+  Wallet.msgSha256 = function (fetchTemplate) {
+    return Tool.msgSha256 (fetchTemplate)
+  }
 
   /**
    * @async
@@ -196,9 +202,48 @@ function walletFactory(config, Tool) {
     .then(res => res.json())
     .then(res => {
       if (!res) throw new Error('Get account info error.')
-      // if (res.errcode != 0) return res
       return res
     })
+  }
+
+  /**
+   * @function Wallet.getRequestParams
+   * @param {string} account_name
+   * @returns {Promise<Object>}
+   * @desc get request param
+   */
+  Wallet.getRequestParams = function(params) {
+    return Tool.getRequestParams(params)
+  }
+
+  /**
+   * @function Wallet.getRequestParams
+   * @param {Object} params
+   * @returns {Promise}
+   * @desc get request param
+   */
+  Wallet.getTransferParams = function(params) {
+    let originFetchTemplate = getTransferFetchTemplate(params)
+    return Tool.getRequestParams(originFetchTemplate)
+  }
+
+  /**
+   * @function Wallet.getRequestParams
+   * @param {Object} params
+   * @param {String} account
+   * @returns {Promise}
+   * @desc get request param
+   */
+  Wallet.getStakeParams = function(params, account) {
+    let { amount, target } = params
+    target = target ? target : 'vote'
+    let value = amount * coefficient
+    let originFetchTemplate = {
+      method: "stake",
+      sender: account,
+      param: { amount: Number.parseInt(value), target },
+    }
+    return Tool.getRequestParams(originFetchTemplate)
   }
 
   /**
@@ -212,36 +257,73 @@ function walletFactory(config, Tool) {
    * @param {string} privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.sendTransaction = function (params, privateKey) {
-    let originFetchTemplate = getTransferFetchTemplate(params)
-    return Tool.getRequestParams(originFetchTemplate, privateKey)
-      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+  Wallet.sendTransaction = function (param, signMsg) {
+    param.signature = signMsg
+    return Tool._Api.request('/transaction/send', param)
       .then(res => res.json())
   }
 
   /**
    * @async
+   * @function Wallet.transactionPolling
+   * @param {string} trxHash
+   * @param {Number} lime
+   * @param {Number} interval
+   * @param {Function} success_backcall
+   * @param {Function} faild_backcall
+   */
+  let pollCount = 0
+  Wallet.transactionPolling = (trxHash, lime, interval, success_backcall, faild_backcall) => {
+    setTimeout(() => {
+      Tool._Api.anyRequest("http://183.2.169.208:8689/v1/transaction/status",{trx_hash:trxHash})
+        .then(response=>response.json())
+        .then((response) => {
+            if (response.errcode === 20300 || response.errcode === 20302 || response.errcode === 20303 || response.errcode === 20301) {
+                if (pollCount < lime) {
+                    pollCount++
+                    Wallet.transactionPolling(trxHash, lime, interval, success_backcall, faild_backcall)
+                } else {
+                    // 抛出异常
+                    throw new Error(response.msg)
+                }
+            } else {
+                pollCount = 0
+                // 查询结果
+                if (response.result.status === 'committed') {
+
+                    if (success_backcall) {
+                        success_backcall(response)
+                    } else {
+                        return {
+                            success: true
+                        }
+                    }
+                } else {
+                    // 抛出异常
+                    throw new Error(response.msg)
+                }
+            }
+        }).catch((error) => {
+
+            pollCount = 0
+            if (faild_backcall) {
+                faild_backcall(new Error('transfer faild'))
+            } else {
+                throw new Error('transfer faild')
+            }
+        })
+    }, interval)
+}
+
+  /**
+   * @async
    * @function Wallet.stake
    * @param {Object} params
-   * @param {NumberLike} params.amount
-   * @param {string} [params.target=vote] - The target you want to stake for, can set to `vote`, `space` or `time`.
-   * @param {Object} senderInfo
-   * @param {string} senderInfo.account
-   * @param {(string|Uint8Array)} senderInfo.privateKey
    * @returns {Promise<Object>}
    */
-  Wallet.stake = function (params, senderInfo) {
-    let { amount, target } = params
-    target = target ? target : 'vote'
-    let value = amount * coefficient
-    const { account, privateKey } = senderInfo
-    let originFetchTemplate = {
-      method: "stake",
-      sender: account,
-      param: { amount: Number.parseInt(value), target },
-    }
-    return Tool.getRequestParams(originFetchTemplate, privateKey)
-      .then((fetchTemplate) => Tool._Api.request('/transaction/send', fetchTemplate))
+  Wallet.stake = function (params, signMsg) {
+      params.signature = signMsg
+      return Tool._Api.request('/transaction/send', params)
       .then(res => res.json())
   }
 

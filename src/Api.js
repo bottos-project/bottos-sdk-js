@@ -65,6 +65,40 @@ function ApiFactory(config) {
     return _fetch(config.baseUrl + url, __options)
   }
 
+  /**
+   * @function Api.request
+   * @param {string} url
+   * @param {Object} params
+   * @param {string} [method=POST]
+   * @returns {Promise<Response>}
+   */
+  function anyFetch(url, params, method = 'POST') {
+
+    if (method.toUpperCase() == 'GET') {
+      let paramStr = ''
+      if (params && typeof params == 'object') {
+        paramStr = '?' + querystring.stringify(params)
+      }
+
+      const CORSOptions = {
+        method: 'GET',
+        mode: 'cors',
+      }
+      return _fetch(config.baseUrl + url + paramStr, CORSOptions)
+    }
+
+    let __options = {
+      method: 'POST',
+      mode: 'cors',
+      // headers: {
+      //   contentType: 'application/json'
+      // },
+      body: JSON.stringify(params)
+    }
+
+    return _fetch(url, __options)
+  }
+
 
   /**
    * Returns the abi.
@@ -163,7 +197,8 @@ function ApiFactory(config) {
     chain_id: "7e16479f12fafb52696b31c31a8fdbafc527a9c8d5b4a8cfb222d5304ad92ed0",
     request: simpleFetch,
     getAbi,
-    getBlockHeader
+    getBlockHeader,
+    anyRequest: anyFetch
   }
 
   return Api

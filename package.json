@@ -1,9 +1,48 @@
 {
-  "name": "bottos-sdk-js",
-  "version": "0.5.0",
-  "main": "index.js",
+  "_from": "bottos-sdk-js@0.6.0",
+  "_id": "bottos-sdk-js@0.6.0",
+  "_inBundle": false,
+  "_integrity": "sha512-0g4dY6KzmtqUa/U1ZJc9bSIneDLtlxZ4DiL4HEdZ2Vy2xbePlYpv5DkyrQJxqa04Ce5HtgAm+dDnSGpYtallpA==",
+  "_location": "/bottos-sdk-js",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "bottos-sdk-js@0.6.0",
+    "name": "bottos-sdk-js",
+    "escapedName": "bottos-sdk-js",
+    "rawSpec": "0.5.0",
+    "saveSpec": null,
+    "fetchSpec": "0.5.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/bottos-sdk-js/-/bottos-sdk-js-0.5.0.tgz",
+  "_shasum": "bef6206922ffded9fcda92244d287fc54dc947d5",
+  "_spec": "bottos-sdk-js@0.6.0",
+  "_where": "D:\\workspace\\钱包\\chromewallet",
+  "author": {
+    "name": "VinciXie"
+  },
   "browser": "browser.js",
-  "typings": "./index.d.ts",
+  "bugs": {
+    "url": "https://github.com/bottos-project/bottos-sdk-js/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "bottos-crypto-js": "^1.0.14",
+    "bottos-js-msgpack": "^1.0.5",
+    "node-fetch": "^2.3.0",
+    "querystring": "^0.2.0"
+  },
+  "deprecated": false,
+  "description": "You need to run a local Bottos node to use this library.",
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
+  },
   "files": [
     "index.js",
     "browser.js",
@@ -13,31 +52,24 @@
     "index.d.ts",
     "Abi.js"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/bottos-project/bottos-sdk-js.git"
-  },
-  "dependencies": {
-    "bottos-crypto-js": "^1.0.14",
-    "bottos-js-msgpack": "^1.0.5",
-    "node-fetch": "^2.3.0",
-    "querystring": "^0.2.0"
-  },
+  "homepage": "https://github.com/bottos-project/bottos-sdk-js#readme",
   "keywords": [
     "bottos",
     "bottos-sdk-js",
     "API"
   ],
-  "scripts": {
-    "test": "jest",
-    "build": "webpack --mode=production"
-  },
-  "author": "VinciXie",
   "license": "GPL-3.0",
+  "main": "index.js",
+  "name": "bottos-sdk-js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bottos-project/bottos-sdk-js.git"
+  },
+  "scripts": {
+    "build": "webpack --mode=production",
+    "test": "jest"
+  },
+  "typings": "./index.d.ts",
   "unpkg": "./umd/bottos-sdk-js.min.js",
-  "devDependencies": {
-    "jest": "^23.6.0",
-    "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2"
-  }
+  "version": "0.6.0"
 }

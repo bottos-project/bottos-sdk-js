@@ -74,46 +74,71 @@ function ToolFactory(config, Api) {
    * @param {(string|Buffer)} privateKey
    * @returns {string} signature
    */
-  const signMsg = function (fetchTemplate, privateKey) {
+  Tool.signMsg = function (fetchTemplate, privateKey) {
     let encodeBuf = messageProtoEncode(fetchTemplate)
     const chain_id = Api.chain_id
     let msg = BTCryptTool.buf2hex(encodeBuf) + chain_id
+
+    console.log(msg, 'msg')
+
     let pri = keystore.str2buf(privateKey)
     let hashData = BTCryptTool.sha256(msg)
+
+    console.log(hashData.toString('hex'), 'sha256')
+
     let sign = BTCryptTool.sign(hashData, pri)
     let signature = sign.toString('hex')
+
+    console.log(signature, 'signature')
+
+    fetchTemplate.param = BTCryptTool.buf2hex(fetchTemplate.param)
+    
     return signature;
   }
 
   /**
-   * @private
-   * @param {originFetchTemplate} originFetchTemplate
-   * @param {Object} blockHeader
-   * @param {(string|Buffer)} privateKey
-   * @param {Object} abi
-   * @returns {Object}
+   * @param {Object} fetchTemplate
+   * @returns {string} msgSha256
    */
-  const processFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
-    let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
-    let paramArr = packParamToParamArr(fetchTemplate, abi)
-    fetchTemplate.param = paramArr
-    let signature = signMsg(fetchTemplate, privateKey)
-    fetchTemplate.param = BTCryptTool.buf2hex(paramArr)
-    // console.log('fetchTemplate.param', fetchTemplate.param)
-    fetchTemplate.signature = signature
-    // console.log('fetchTemplate', fetchTemplate)
-    return fetchTemplate
+  Tool.msgSha256 = function (fetchTemplate) {
+    let encodeBuf = messageProtoEncode(fetchTemplate)
+    const chain_id = Api.chain_id
+    let msg = BTCryptTool.buf2hex(encodeBuf) + chain_id
+    let hashData = BTCryptTool.sha256(msg)
+    return hashData
   }
 
   /**
    * @private
    * @param {originFetchTemplate} originFetchTemplate
    * @param {Object} blockHeader
-   * @param {(string|Buffer)} privateKey
+   * @param {Object} abi
+   * @returns {Object}
+   */
+  const processFetchTemplate = function (originFetchTemplate, blockHeader, abi) {
+    let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
+    let paramArr = packParamToParamArr(fetchTemplate, abi)
+    fetchTemplate.param = paramArr
+    
+    // let signature = signMsg(fetchTemplate, privateKey)
+
+    // fetchTemplate.param = BTCryptTool.buf2hex(paramArr)
+
+    
+    // fetchTemplate.signature = signature
+    
+    return fetchTemplate
+  }
+
+
+  /**
+   * @private
+   * @param {originFetchTemplate} originFetchTemplate
+   * @param {Object} blockHeader
    * @param {(Object|null)} abi
    * @returns {Object}
    */
-  const processExternalFetchTemplate = function (originFetchTemplate, blockHeader, privateKey, abi) {
+  const processExternalFetchTemplate = function (originFetchTemplate, blockHeader, abi) {
     let fetchTemplate = addBlockHeader(originFetchTemplate, blockHeader)
     let method = fetchTemplate.method
     // 这里做个判断，如果 abi 是 null，就不用 pack，直接传空数组
@@ -129,11 +154,11 @@ function ToolFactory(config, Api) {
     }
 
     fetchTemplate.param = packBuf
-    let signature = signMsg(fetchTemplate, privateKey)
-    fetchTemplate.param = BTCryptTool.buf2hex(packBuf)
-    // console.log('fetchTemplate.param', fetchTemplate.param)
-    fetchTemplate.signature = signature
-    // console.log('fetchTemplate', fetchTemplate)
+    // fetchTemplate.param = BTCryptTool.buf2hex(packBuf)
+
+    // let signature = signMsg(fetchTemplate, privateKey)
+    // fetchTemplate.signature = signature
+
     return fetchTemplate
   }
 
@@ -147,14 +172,32 @@ function ToolFactory(config, Api) {
     return Api.request('/transaction/get', {trx_hash}).then(res => res.json())
   }
 
+  Tool.Bytes2HexString = function (arrBytes) {
+      var str = "";
+      for (var i = 0; i < arrBytes.length; i++) {
+        var tmp;
+        var num=arrBytes[i];
+        if (num < 0) {
+        //此处填坑，当byte因为符合位导致数值为负时候，需要对数据进行处理
+          tmp =(255+num+1).toString(16);
+        } else {
+          tmp = num.toString(16);
+        }
+        if (tmp.length == 1) {
+          tmp = "0" + tmp;
+        }
+        str += tmp;
+      }
+      return str;
+  }
+
   /**
    * @async
    * @function Tool.getRequestParams
    * @param {originFetchTemplate} originFetchTemplate
-   * @param {(string|Buffer)} privateKey - Your private key.
    * @returns {Promise<Object>}
    */
-  Tool.getRequestParams = function (originFetchTemplate, privateKey) {
+  Tool.getRequestParams = function (originFetchTemplate) {
 
     let _defaultParams = {
       version: config.version || 1,
@@ -172,7 +215,7 @@ function ToolFactory(config, Api) {
       return this._Api.getBlockHeader()
         .then((blockHeader) => {
           _originFetchTemplate.version = config.version
-          return processFetchTemplate(_originFetchTemplate, blockHeader, privateKey)
+          return processFetchTemplate(_originFetchTemplate, blockHeader)
         })
     }
     // 如果不是内置合约，请求外置合约，外置合约的合约名就是发布合约的用户名
@@ -180,11 +223,11 @@ function ToolFactory(config, Api) {
     .then(abi => this._Api.getBlockHeader()
       .then((blockHeader) => {
         _originFetchTemplate.version = config.version
-        return processExternalFetchTemplate(_originFetchTemplate, blockHeader, privateKey, abi)
+        return processExternalFetchTemplate(_originFetchTemplate, blockHeader, abi)
       }))
   }
+
   return Tool
 }
-
 
 module.exports = ToolFactory
