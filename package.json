@@ -33,7 +33,7 @@
   "dependencies": {
     "bottos-crypto-js": "^1.0.14",
     "bottos-js-msgpack": "^1.0.5",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^3.1.1",
     "querystring": "^0.2.0"
   },
   "deprecated": false,
